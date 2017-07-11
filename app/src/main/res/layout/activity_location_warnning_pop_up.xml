@@ -11,13 +11,21 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/location_warning"
-        android:textSize="20sp" />
+        android:textSize="20sp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="parent"
+        android:layout_marginTop="60dp"/>
 
     <Button
         android:id="@+id/ok"
-        android:layout_width="match_parent"
+        android:layout_width="88dp"
         android:layout_height="wrap_content"
         android:text="OK"
-        android:onClick="okClose"/>
+        android:onClick="okClose"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/title"
+        android:layout_marginTop="30dp"/>
 
 </android.support.constraint.ConstraintLayout>

@@ -19,7 +19,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".LocationWarnningPopUp"></activity>
+
+        <activity android:name=".LocationWarnningPopUp"
+            android:label="LocationWarnningPopUp"
+            android:theme="@android:style/Theme.Dialog" />
     </application>
+
 
 </manifest>

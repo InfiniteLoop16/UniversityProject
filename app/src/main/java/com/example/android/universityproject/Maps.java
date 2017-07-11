@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -60,7 +61,10 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback,
     public void locDiaFragSwitch(){
         Intent locIntent = new Intent(this, LocationWarnningPopUp.class);
         startActivity(locIntent);
+
     }
+
+
 
     //This method checks to see whether location services is enabled.
     // It returns a true if enabled, or false if not.
