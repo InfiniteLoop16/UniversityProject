@@ -58,8 +58,8 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback,
 
     // This method starts intent to open activity advising that location services have not been enabled.
     public void locDiaFragSwitch(){
-        //Intent locIntent = new Intent(this, LocDialogFragment.class);
-        //startActivity(locIntent);
+        Intent locIntent = new Intent(this, LocationWarnningPopUp.class);
+        startActivity(locIntent);
     }
 
     //This method checks to see whether location services is enabled.

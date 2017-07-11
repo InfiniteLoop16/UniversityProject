@@ -3,4 +3,10 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="log_in">Sign In</string>
+    <string name="location_warning">\
+        Location Services are turned off!
+        In order to share your position with friends, please turn on your location services
+        located in your device settings.
+    </string>
 </resources>
