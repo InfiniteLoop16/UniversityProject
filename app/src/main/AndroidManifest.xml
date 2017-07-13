@@ -12,6 +12,15 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        // Meta data used to declare the Google Maps API version being used.
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+        // Meta data: The value of this is the API key for the application for Google MAPS.
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyBjHV1Mm9NEwdTvIKwCU4Uw-WaT7z7PmFA" />
+
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -19,11 +28,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <activity android:name=".LocationWarnningPopUp"
+        <activity
+            android:name=".LocationWarnningPopUp"
             android:label="LocationWarnningPopUp"
             android:theme="@android:style/Theme.Dialog" />
+        <activity android:name=".Maps"></activity>
     </application>
-
 
 </manifest>
