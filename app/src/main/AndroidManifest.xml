@@ -33,7 +33,8 @@
             android:label="LocationWarnningPopUp"
             android:theme="@android:style/Theme.Dialog" />
         <activity android:name=".Maps" />
-        <activity android:name=".PostRecyclerActivity"></activity>
+        <activity android:name=".PostRecyclerActivity" />
+        <activity android:name=".NewPost"></activity>
     </application>
 
 </manifest>
