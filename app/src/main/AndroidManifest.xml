@@ -34,7 +34,9 @@
             android:theme="@android:style/Theme.Dialog" />
         <activity android:name=".Maps" />
         <activity android:name=".PostRecyclerActivity" />
-        <activity android:name=".NewPost"></activity>
+        <activity android:name=".NewPost" />
+        <activity android:name=".ReplyRecycler" />
+        <activity android:name=".ReplyPost"></activity>
     </application>
 
 </manifest>
