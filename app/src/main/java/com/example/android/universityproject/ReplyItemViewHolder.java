@@ -4,8 +4,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
 
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 
 /**
  * Created by Jake on 12/08/2017.
@@ -16,7 +14,6 @@ public class ReplyItemViewHolder extends RecyclerView.ViewHolder{
     private final TextView mBodyField;
     private final TextView mUserNameField;
     private final TextView mTimeStampField;
-    private DatabaseReference mFirebaseDatabase;
 
 
 
@@ -27,8 +24,6 @@ public class ReplyItemViewHolder extends RecyclerView.ViewHolder{
         mUserNameField = (TextView) itemView.findViewById(R.id.userNameReplyView);
         mTimeStampField = (TextView) itemView.findViewById(R.id.textViewReplyTime);
 
-
-        mFirebaseDatabase = FirebaseDatabase.getInstance().getReference();
     }
 
     public void bind(ListItem post){
@@ -53,7 +48,6 @@ public class ReplyItemViewHolder extends RecyclerView.ViewHolder{
     private void setTimeAndDate(String mCurrentTime){
         mTimeStampField.setText(mCurrentTime);
     }
-
 
 
 }
