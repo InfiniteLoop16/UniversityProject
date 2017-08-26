@@ -15,7 +15,7 @@ import com.google.firebase.database.FirebaseDatabase;
 public class ReplyRecycler extends AppCompatActivity {
 
     private RecyclerView mRecyclerView;
-    private RecyclerView.Adapter mAdapter;
+    private RecyclerView.Adapter mFirebaseAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
     private DatabaseReference mDataRef;
     private DatabaseReference mDataRefChild;
@@ -54,7 +54,7 @@ public class ReplyRecycler extends AppCompatActivity {
 
 
         // FirebaseRecycler Adapter Subclass.
-        mAdapter = new FirebaseRecyclerAdapter<ListItem, ReplyItemViewHolder>(
+        mFirebaseAdapter = new FirebaseRecyclerAdapter<ListItem, ReplyItemViewHolder>(
                 ListItem.class,
                 R.layout.reply_recycler_item,
                 ReplyItemViewHolder.class,
@@ -66,7 +66,7 @@ public class ReplyRecycler extends AppCompatActivity {
 
             }
         };
-        mRecyclerView.setAdapter(mAdapter);
+        mRecyclerView.setAdapter(mFirebaseAdapter);
     }
 
     @Override

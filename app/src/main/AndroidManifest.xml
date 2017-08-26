@@ -36,7 +36,11 @@
         <activity android:name=".PostRecyclerActivity" />
         <activity android:name=".NewPost" />
         <activity android:name=".ReplyRecycler" />
-        <activity android:name=".ReplyPost"></activity>
+        <activity android:name=".ReplyPost" />
+        <activity
+            android:name=".BasePostActivity"
+            android:label="@string/title_activity_base_post"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

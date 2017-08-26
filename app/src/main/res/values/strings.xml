@@ -9,4 +9,5 @@
         In order to share your position with friends, please turn on your location services
         located in your device settings.
     </string>
+    <string name="title_activity_base_post">BasePostActivity</string>
 </resources>
