@@ -1,4 +1,4 @@
-# UniversityProject
+# University Project
 
 An Android application that utilises Google Maps API.
 Designed as a social netowkring style blog application for users who wish to attend an event, and would like to do so in
