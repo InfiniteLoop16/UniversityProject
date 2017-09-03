@@ -5,6 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.example.android.universityproject.R;
 import com.google.firebase.auth.FirebaseAuth;
@@ -62,9 +63,13 @@ public abstract class BasePostActivity extends AppCompatActivity {
         public void onClick(View v) {
             setPostDetails();
             sendPost();
-
+            finish();
         }
+
     };
+
+
+
 
     public void setPostDetails(){
         String title = eTitle.getText().toString();

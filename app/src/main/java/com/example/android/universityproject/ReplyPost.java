@@ -39,7 +39,6 @@ public class ReplyPost extends BasePostActivity{
         keyId = myRef.getKey();
         newPost.setId(keyId);
         myRef.setValue(newPost);
-        finish();
     }
 
 }

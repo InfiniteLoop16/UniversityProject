@@ -1,8 +1,10 @@
 package com.example.android.universityproject;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
@@ -15,15 +17,23 @@ import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.PendingResult;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.LocationSettingsRequest;
+import com.google.android.gms.location.LocationSettingsResult;
+import com.google.android.gms.location.LocationSettingsStates;
+import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -33,6 +43,8 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
+
+import java.util.HashMap;
 
 public class Maps extends FragmentActivity implements OnMapReadyCallback,
         ActivityCompat.OnRequestPermissionsResultCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,
@@ -44,7 +56,6 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback,
 
 
     private Location dLocation;
-
 
     private GoogleApiClient mGoogleApiClient;
 
@@ -59,8 +70,10 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback,
 
     // Firebase instance variables
     private DatabaseReference mFirebaseDatabaseReference;
-    private DatabaseReference mLocationDataRef;
     private DatabaseReference mChildLocation;
+    private DatabaseReference mLocNodeRef;
+
+    private DatabaseReference mLocNode;
 
     private String childNode;
 
@@ -68,7 +81,7 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback,
 
     private LocationCallback mLocationCallback;
 
-
+    private HashMap<String, UserLocation> locationMap;
 
 
 
@@ -89,51 +102,37 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback,
         Intent i = getIntent();
         childNode = i.getStringExtra("ChildNode");
 
+
         mFirebaseDatabaseReference = FirebaseDatabase.getInstance().getReference();
+
+
         mChildLocation = mFirebaseDatabaseReference.child("Convo's").child(childNode);
-        mLocationDataRef = mChildLocation.child("UserLocation");
+
+
+        //User Location node
+        mLocNode = mFirebaseDatabaseReference.child("UserLocation");
+
+        // Equals the unique ID node of that message, under the UserLocation node.
+        // UserLocation { UniqueID
+        mLocNodeRef = mLocNode.child(childNode);
+
 
         mFirebaseAuth = FirebaseAuth.getInstance();
         mUser = mFirebaseAuth.getCurrentUser();
 
 
-
-        mLocationRequest = new LocationRequest();
-
         mFusedLocation = LocationServices.getFusedLocationProviderClient(this);
-
 
 
         initializeGoogleApiClient();
 
+
         mLocationCallback = new LocationCallback();
 
-        mLocationRequest = new LocationRequest();
         uLocation = new UserLocation();
         mLocationRequest = new LocationRequest();
 
-
-        mLocationDataRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                UserLocation UserLoc;
-                for (DataSnapshot child : dataSnapshot.getChildren()) {
-                    UserLoc = child.getValue(UserLocation.class);
-
-                    double friendLatitude = UserLoc.getLatitude();
-                    double friendLongitude = UserLoc.getLongitude();
-                    mfriendLocation = new LatLng(friendLatitude, friendLongitude);
-                    String friendName = UserLoc.getName();
-                    mMap.addMarker(new MarkerOptions().position(mfriendLocation).title(friendName));
-
-                }
-
-            }
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
+        locationMap = new HashMap<String, UserLocation>();
 
 
     }
@@ -144,36 +143,155 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback,
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-
-        requestLocationPermission();
-        if(!gpsCheck()){
-            locDiaFragSwitch();}
-
-        lastKnownLocation();
+        permissionCheck();
     }
 
 
-
     @Override
-    protected void onStart(){
+    protected void onStart() {
         super.onStart();
-        if(mGoogleApiClient != null){
-            mGoogleApiClient.connect();}
+        if (mGoogleApiClient != null) {
+            mGoogleApiClient.connect();
+        }
     }
 
     @Override
-    protected void onStop(){
-        mLocationDataRef.child(uLocation.getName()).removeValue();
+    protected void onStop() {
+        LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
+
+
+
+
+        /*// UserLocation node Event Listener
+        mLocNodeRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot SnapShot : dataSnapshot.getChildren()) {
+                        UserLocation uLoc = SnapShot.getValue(UserLocation.class);
+                        if (dataSnapshot.hasChild(uLoc.getName())) {
+                            mLocNodeRef.child(uLoc.getName()).removeValue();
+
+
+                        }
+                    }
+                }
+
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });*/
+
         mGoogleApiClient.disconnect();
+
         super.onStop();
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
     }
 
 
     @Override
-    public void onConnected(Bundle bundle){
+    public void onConnected(Bundle bundle) {
 
         createLocationRequest();
+
+        LocationSettingsRequest.Builder lBuilder = new LocationSettingsRequest.Builder()
+                .addLocationRequest(mLocationRequest);
+
+        //lBuilder.setAlwaysShow(true);
+
+        PendingResult<LocationSettingsResult> result =
+                LocationServices.SettingsApi.checkLocationSettings(mGoogleApiClient, lBuilder.build());
+        result.setResultCallback(new ResultCallback<LocationSettingsResult>() {
+            @Override
+            public void onResult(LocationSettingsResult result) {
+                final Status status = result.getStatus();
+                final LocationSettingsStates state = result.getLocationSettingsStates();
+                switch (status.getStatusCode()) {
+                    case LocationSettingsStatusCodes.SUCCESS:
+
+
+                        break;
+                    case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
+
+
+                        try {
+
+
+                            status.startResolutionForResult(
+                                    Maps.this, REQUEST_LOCATION);
+
+
+                        } catch (IntentSender.SendIntentException e) {
+
+                        }
+                        break;
+                    case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
+
+                        break;
+                }
+
+            }
+        });
+
         locationUpdates();
+
+
+        // mLoNodeRef is the UserLocation Node.
+        mLocNodeRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                UserLocation userLoc;
+                mMap.clear();
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+
+
+                    userLoc = snapshot.getValue(UserLocation.class);
+
+                    double friendLatitude = userLoc.getLatitude();
+                    double friendLongitude = userLoc.getLongitude();
+
+                    String friendName = userLoc.getName();
+
+                    mfriendLocation = new LatLng(friendLatitude, friendLongitude);
+
+                    mMap.addMarker(new MarkerOptions().position(mfriendLocation).title(friendName));
+
+
+                }
+            }
+
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
+            case REQUEST_LOCATION:
+                switch (resultCode) {
+                    case Activity.RESULT_OK:
+
+
+                        locationUpdates();
+                        break;
+                    case Activity.RESULT_CANCELED:
+
+
+                }
+
+
+        }
 
     }
 
@@ -184,16 +302,17 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback,
 
     // WHAT AM I GOING TO DO WITH THIS METHOD!!
     @Override
-    public void onConnectionFailed(@NonNull ConnectionResult result){
+    public void onConnectionFailed(@NonNull ConnectionResult result) {
         Toast toast = Toast.makeText(this, "Connection to google maps location services failed at this time", Toast.LENGTH_LONG);
         toast.show();
     }
 
     // Method to initialise Google API Client.
-    private void initializeGoogleApiClient(){
+    private void initializeGoogleApiClient() {
 
-        if(mGoogleApiClient == null){
+        if (mGoogleApiClient == null) {
             mGoogleApiClient = new GoogleApiClient.Builder(this)
+                    .addApi(LocationServices.API)
                     .addConnectionCallbacks(this)
                     .addOnConnectionFailedListener(this)
                     .addApi(LocationServices.API)
@@ -211,83 +330,50 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback,
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
     }
 
-    // Finds the last known location of the device.
-    // Check to ensure that location permission has been granted.
-    // If location is not null then creates a GeoLocation object containing the last known location.
-    // WOOOOOHOOOOHOHOHOHOH
-    public void lastKnownLocation() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            dLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
 
-
-            if (dLocation != null) {
-                double latitude = dLocation.getLatitude();
-                double longitude = dLocation.getLongitude();
-
-                UserLocation uLocation = new UserLocation();
-                uLocation.setName(mUser.getDisplayName());
-                uLocation.setLatitude(latitude);
-                uLocation.setLongitude(longitude);
-                mLocationDataRef.push().setValue(uLocation);
-            }
-        }
-    }
-
-    public void locationUpdates(){
+    public void locationUpdates() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {
             LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
+
+
         }
+
 
     }
 
 
-
-    public void onLocationChanged(Location location){
+    public void onLocationChanged(Location location) {
         dLocation = location;
-        if(dLocation!= null) {
+        if (dLocation != null) {
             double latitude = dLocation.getLatitude();
             double longitude = dLocation.getLongitude();
-
 
 
             uLocation.setName(mUser.getDisplayName());
             uLocation.setLatitude(latitude);
             uLocation.setLongitude(longitude);
-            mLocationDataRef.child(uLocation.getName()).setValue(uLocation);
 
-            Toast toast = Toast.makeText(Maps.this, Double.toString(latitude)+ Double.toString(longitude), Toast.LENGTH_SHORT);
+            // This was mLocationDataRef!!!
+            mLocNodeRef.child(uLocation.getName()).setValue(uLocation);
+
+            Toast toast = Toast.makeText(Maps.this, Double.toString(latitude) + Double.toString(longitude), Toast.LENGTH_SHORT);
             toast.show();
         }
 
     }
 
 
-    // This method starts intent to open activity advising that location services have not been enabled.
-    public void locDiaFragSwitch(){
-        // Need to write body.
-    }
-
-    //This method checks to see whether location services is enabled.
-    // It returns a true if enabled, or false if not.
-    public  boolean gpsCheck(){
-        LocationManager location = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
-        if(location.isProviderEnabled(LocationManager.GPS_PROVIDER)){
-
-            return true;
-        }else{
-            return false;
-        }
-    }
-
     // This method requests permission from the user to allow access to location services.
-    private void requestLocationPermission(){
+
+
+    /*private void requestLocationPermission(){
         ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                 REQUEST_LOCATION);
-    }
+        }
+*/
 
-
-    @Override
+   /*@Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
         switch (requestCode) {
             case REQUEST_LOCATION: {
@@ -299,7 +385,19 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback,
                 }
             }
         }
+    }*/
+
+    public void permissionCheck() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    REQUEST_LOCATION);
+        } else {
+            mMap.setMyLocationEnabled(true);
+        }
     }
+
+
 }
 
 

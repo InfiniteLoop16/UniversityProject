@@ -4,6 +4,9 @@
 
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.MAPS_RECEIVE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="true"
@@ -28,19 +31,17 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".LocationWarnningPopUp"
-            android:label="LocationWarnningPopUp"
-            android:theme="@android:style/Theme.Dialog" />
         <activity android:name=".Maps" />
         <activity android:name=".PostRecyclerActivity" />
-        <activity android:name=".NewPost" />
+        <activity android:name=".NewPost"
+            android:windowSoftInputMode="stateVisible|adjustResize"/>
         <activity android:name=".ReplyRecycler" />
-        <activity android:name=".ReplyPost" />
+        <activity android:name=".ReplyPost"
+            android:windowSoftInputMode="stateVisible|adjustResize"/>
         <activity
             android:name=".BasePostActivity"
             android:label="@string/title_activity_base_post"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
     </application>
 
 </manifest>

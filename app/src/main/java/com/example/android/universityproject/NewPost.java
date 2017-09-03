@@ -34,7 +34,6 @@ public class NewPost extends BasePostActivity {
         newPost.setId(keyId);
         myRef.setValue(newPost);
         mDatabaseConvo.child(keyId).push().setValue(newPost);
-        finish();
     }
 
 
