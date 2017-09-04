@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -62,18 +61,18 @@ public class MainActivity extends AppCompatActivity {
         };
 
 
-        // Configure Google SignIn as provided by Android Google Documentation
+        // Configure Google SignIn as provided by Android Google documentation.
         GoogleSignInOptions gSignInOptions = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
                 .build();
 
-        //
+        // Configure Google API Client. Provided by Android Google documentation.
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .enableAutoManage(this /* FragmentActivity */, new GoogleApiClient.OnConnectionFailedListener() {
                     @Override
                     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-                        Toast toast = Toast.makeText(MainActivity.this, "Oops!", Toast.LENGTH_SHORT);
+                        Toast toast = Toast.makeText(MainActivity.this, "Connection to Google failed.", Toast.LENGTH_SHORT);
                         toast.show();
                     }
                 })
@@ -90,12 +89,16 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    // Sign in method, uses sign in intent provided by Android Google documentation.
+    // Sends request to Google API client, with constant RC_SIGN_IN defined in this activity.
+    // Response of intent used in onActivityResult method.
     public void signIn() {
         Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
         startActivityForResult(signInIntent, RC_SIGN_IN);
     }
 
 
+    // onClickListener calls signIn Method.
     public View.OnClickListener logInSwitch = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -105,6 +108,9 @@ public class MainActivity extends AppCompatActivity {
 
     };
 
+    // Verifies request code value, sent from Google API, to RC_SIGN_IN constant.
+    // If values match then Users federated account (Google, Gmail, Hotmail) is verified
+    // User is signed in, and allowed to use the application.
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -120,6 +126,10 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    // Authenticates users with the Firebase database. Provided by Google Firebase Android documentation.
+    // If authentication fails, then the user is presented with a toast.
+    // A user receives an authentication token from Firebase. There information is recorded in firebase.
+    // If user is successful they are taken to the PostRecycler Activity.
     private void fBaseAuth(GoogleSignInAccount accnt) {
         AuthCredential gCredentials = GoogleAuthProvider.getCredential(accnt.getIdToken(), null);
         mFirebaseAuth.signInWithCredential(gCredentials)
@@ -140,6 +150,8 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    // onClickListener for logging user ot from their email account.
+    // When successful a toast will display, confirming.
     public View.OnClickListener LogOut = new View.OnClickListener(){
         @Override
         public void onClick(View v) {

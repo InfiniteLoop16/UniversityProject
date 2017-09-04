@@ -2,12 +2,10 @@ package com.example.android.universityproject;
 
 import android.Manifest;
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.location.Location;
-import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -81,7 +79,6 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback,
 
     private LocationCallback mLocationCallback;
 
-    private HashMap<String, UserLocation> locationMap;
 
 
 
@@ -132,7 +129,6 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback,
         uLocation = new UserLocation();
         mLocationRequest = new LocationRequest();
 
-        locationMap = new HashMap<String, UserLocation>();
 
 
     }
@@ -214,19 +210,11 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback,
                 final LocationSettingsStates state = result.getLocationSettingsStates();
                 switch (status.getStatusCode()) {
                     case LocationSettingsStatusCodes.SUCCESS:
-
-
                         break;
                     case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
-
-
                         try {
-
-
                             status.startResolutionForResult(
                                     Maps.this, REQUEST_LOCATION);
-
-
                         } catch (IntentSender.SendIntentException e) {
 
                         }
@@ -275,22 +263,17 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback,
 
     }
 
+    // Callback method in response to LocaionSettings builder.
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
             case REQUEST_LOCATION:
                 switch (resultCode) {
                     case Activity.RESULT_OK:
-
-
                         locationUpdates();
                         break;
                     case Activity.RESULT_CANCELED:
-
-
                 }
-
-
         }
 
     }
@@ -300,7 +283,8 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback,
         mGoogleApiClient.connect();
     }
 
-    // WHAT AM I GOING TO DO WITH THIS METHOD!!
+    // Callback method.
+    // If application fails to connect to Google Maps API, application presents toast.
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult result) {
         Toast toast = Toast.makeText(this, "Connection to google maps location services failed at this time", Toast.LENGTH_LONG);
@@ -308,6 +292,7 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback,
     }
 
     // Method to initialise Google API Client.
+    // Detailed in Google Maps API documentation.
     private void initializeGoogleApiClient() {
 
         if (mGoogleApiClient == null) {
@@ -331,18 +316,20 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback,
     }
 
 
+    // Method too request location updates.
+    // Uses Fused Location provider.
+    // Detailed in Google Maps API documentation for FusedLocationProvider Class.
     public void locationUpdates() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {
             LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
-
-
         }
-
-
     }
 
 
+    // Callback method called when the device location changes.
+    // When the device location changes, the information is stored in a UserLocation object.
+    // This object is then sent to Firebase where it is parsed to JSON.
     public void onLocationChanged(Location location) {
         dLocation = location;
         if (dLocation != null) {
@@ -363,6 +350,8 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback,
 
     }
 
+    // Method that checks the user has given the application permission to use location services.
+    // If permission has already been requested, then location services is enabled.
     public void permissionCheck() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
