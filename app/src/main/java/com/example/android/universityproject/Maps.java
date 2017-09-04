@@ -166,6 +166,7 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback,
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot SnapShot : dataSnapshot.getChildren()) {
+
                     UserLocation uLoc = SnapShot.getValue(UserLocation.class);
                     if (dataSnapshot.hasChild(uLoc.getName())) {
                         mLocNodeRef.child(uLoc.getName()).removeValue();

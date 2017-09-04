@@ -144,7 +144,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onClick(View v) {
             Auth.GoogleSignInApi.signOut(mGoogleApiClient);
-            Toast toast = Toast.makeText(MainActivity.this, R.string.successful_logout, Toast.LENGTH_SHORT);
+            Toast toast = Toast.makeText(MainActivity.this, R.string.successful_logout, Toast.LENGTH_SHORT );
             toast.show();
 
         }
