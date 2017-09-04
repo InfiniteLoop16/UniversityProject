@@ -162,26 +162,25 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback,
 
 
 
-        /*// UserLocation node Event Listener
         mLocNodeRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot SnapShot : dataSnapshot.getChildren()) {
-                        UserLocation uLoc = SnapShot.getValue(UserLocation.class);
-                        if (dataSnapshot.hasChild(uLoc.getName())) {
-                            mLocNodeRef.child(uLoc.getName()).removeValue();
+                    UserLocation uLoc = SnapShot.getValue(UserLocation.class);
+                    if (dataSnapshot.hasChild(uLoc.getName())) {
+                        mLocNodeRef.child(uLoc.getName()).removeValue();
 
 
-                        }
                     }
                 }
+            }
 
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
 
             }
-        });*/
+        });
 
         mGoogleApiClient.disconnect();
 
@@ -362,30 +361,6 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback,
         }
 
     }
-
-
-    // This method requests permission from the user to allow access to location services.
-
-
-    /*private void requestLocationPermission(){
-        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                REQUEST_LOCATION);
-        }
-*/
-
-   /*@Override
-    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
-        switch (requestCode) {
-            case REQUEST_LOCATION: {
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-                            == PackageManager.PERMISSION_GRANTED) {
-                        mMap.setMyLocationEnabled(true);
-                    }
-                }
-            }
-        }
-    }*/
 
     public void permissionCheck() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)

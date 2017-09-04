@@ -62,11 +62,18 @@ public abstract class BasePostActivity extends AppCompatActivity {
         @Override
         public void onClick(View v) {
             setPostDetails();
-            sendPost();
-            finish();
+            if (newPost.getTitle().length() >= 1) {
+                sendPost();
+                finish();
+            } else {
+                Toast toast = Toast.makeText(BasePostActivity.this, R.string.post_warning, Toast.LENGTH_SHORT);
+                toast.show();
+            }
         }
 
-    };
+        };
+
+
 
 
 

@@ -10,4 +10,12 @@
         located in your device settings.
     </string>
     <string name="title_activity_base_post">BasePostActivity</string>
+    <string name="post_warning">
+        Post not sent.\n
+        Please ensure your message has a title.</string>
+
+    <string name="successful_logout">
+        You have successfully logged out of your account.
+    </string>
+
 </resources>
