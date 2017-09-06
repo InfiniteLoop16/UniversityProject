@@ -14,8 +14,15 @@
         Post not sent.\n
         Please ensure your message has a title. </string>
 
+    <string name="facebook_app_id">1916400448683866</string>
+    <string name="fb_login_protocol_scheme">fb1916400448683866</string>
+
     <string name="successful_logout">
         You have successfully logged out of your account.
     </string>
+
+    <string name="post_title">Title</string>
+    <string name="post_body">Body</string>
+    <string name="button_sign_out">Sign out</string>
 
 </resources>

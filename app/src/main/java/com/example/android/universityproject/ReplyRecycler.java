@@ -1,14 +1,22 @@
 package com.example.android.universityproject;
 
 import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
+import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -17,8 +25,8 @@ public class ReplyRecycler extends AppCompatActivity {
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mFirebaseAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
-    private DatabaseReference mDataRef;
-    private DatabaseReference mDataRefChild;
+    private DatabaseReference dataRef;
+    private DatabaseReference dataRefChild;
     private String searcher;
 
     @Override
@@ -26,12 +34,19 @@ public class ReplyRecycler extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_reply_recycler);
 
+        Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        setSupportActionBar(myToolbar);
+
+
         // Gets the putExtra from the CardView. This is the Unique push ID which forms the node key.
         Intent i = getIntent();
-        searcher = i.getStringExtra("uniqueID");
+        if(i.getStringExtra("uniqueID")==null){
+            searcher = i.getStringExtra("uniqueIdMaps");
+        }else{
+        searcher = i.getStringExtra("uniqueID");}
 
-        mDataRef = FirebaseDatabase.getInstance().getReference();
-        mDataRefChild = mDataRef.child("Convo's").child(searcher);
+        dataRef = FirebaseDatabase.getInstance().getReference();
+        dataRefChild = dataRef.child("Convo's").child(searcher);
 
 
         // Create RecyclerView
@@ -44,11 +59,11 @@ public class ReplyRecycler extends AppCompatActivity {
 
         // Creation of FAB onClick Listener for reply post
         FloatingActionButton addPost = (FloatingActionButton) findViewById(R.id.add_Reply_Post);
-        addPost.setOnClickListener(mAddReplyPostListener);
+        addPost.setOnClickListener(startReplyPost);
 
         // Creation of FAB onClick Listener to share location
         FloatingActionButton shareLocation = (FloatingActionButton) findViewById(R.id.share_Location);
-        shareLocation.setOnClickListener(mShareLocation);
+        shareLocation.setOnClickListener(startShareLocation);
 
 
 
@@ -58,7 +73,7 @@ public class ReplyRecycler extends AppCompatActivity {
                 ListItem.class,
                 R.layout.reply_recycler_item,
                 ReplyItemViewHolder.class,
-                mDataRefChild) {
+                dataRefChild) {
 
             @Override
             protected void populateViewHolder(ReplyItemViewHolder viewHolder, ListItem post, int position) {
@@ -74,7 +89,7 @@ public class ReplyRecycler extends AppCompatActivity {
         super.onDestroy();
     }
 
-    private View.OnClickListener mAddReplyPostListener = new View.OnClickListener() {
+    private View.OnClickListener startReplyPost = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             Intent i = new Intent(v.getContext(), ReplyPost.class);
@@ -84,7 +99,7 @@ public class ReplyRecycler extends AppCompatActivity {
         }
     };
 
-    private View.OnClickListener mShareLocation = new View.OnClickListener() {
+    private View.OnClickListener startShareLocation = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             Intent i = new Intent(v.getContext(), Maps.class);
@@ -92,6 +107,36 @@ public class ReplyRecycler extends AppCompatActivity {
             startActivity(i);
         }
     };
+
+    @Override
+    public boolean onCreateOptionsMenu (Menu menu){
+        getMenuInflater().inflate(R.menu.menu_items, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.sign_out:
+                AuthUI.getInstance()
+                        .signOut(ReplyRecycler.this)
+                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                            public void onComplete(@NonNull Task<Void> task) {
+                                Toast toast = Toast.makeText(ReplyRecycler.this, R.string.successful_logout, Toast.LENGTH_SHORT );
+                                toast.show();
+                                finish();
+                                startActivity(new Intent(ReplyRecycler.this, MainActivity.class));
+                            }
+                        });
+                return true;
+
+            default:
+                // If we got here, the user's action was not recognized.
+                // Invoke the superclass to handle it.
+                return super.onOptionsItemSelected(item);
+
+        }
+    }
 
 
 }

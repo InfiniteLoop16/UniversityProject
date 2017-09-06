@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     tools:context="com.example.android.universityproject.MainActivity">
 
-    <TextView
+    <!--<TextView
         android:id="@+id/title_main"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -29,7 +29,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         tools:layout_constraintLeft_creator="1"
         android:layout_marginBottom="58dp"
-        app:layout_constraintLeft_toLeftOf="@+id/sign_in_button"
+        app:layout_constraintLeft_toLeftOf="parent"
         android:layout_marginLeft="11dp" />
 
     <com.google.android.gms.common.SignInButton
@@ -44,6 +44,6 @@
         app:layout_constraintTop_toBottomOf="@+id/title_main"
         tools:layout_constraintLeft_creator="1"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintHorizontal_bias="0.501" />
+        app:layout_constraintHorizontal_bias="0.501" />-->
 
 </android.support.constraint.ConstraintLayout>

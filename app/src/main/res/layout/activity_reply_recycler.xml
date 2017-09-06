@@ -6,6 +6,17 @@
     android:layout_height="match_parent"
     tools:context="com.example.android.universityproject.ReplyRecycler">
 
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/my_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        android:titleTextColor="@color/text"
+        android:elevation="4dp"
+        android:theme="@style/AppTheme.MyToolbar"
+        app:theme="@style/AppTheme.MyToolbar"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/my_reply_recycler_view"
         android:scrollbars="vertical"
@@ -22,7 +33,7 @@
         tools:layout_constraintLeft_creator="1"
         android:layout_marginBottom="8dp"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@id/my_toolbar" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/add_Reply_Post"

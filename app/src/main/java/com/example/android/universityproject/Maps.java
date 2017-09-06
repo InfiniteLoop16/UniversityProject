@@ -31,7 +31,6 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -42,7 +41,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 
-import java.util.HashMap;
+
 
 public class Maps extends FragmentActivity implements OnMapReadyCallback,
         ActivityCompat.OnRequestPermissionsResultCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,
@@ -60,7 +59,7 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback,
     private FusedLocationProviderClient mFusedLocation;
 
     private LocationRequest mLocationRequest;
-    private LatLng mfriendLocation;
+    private LatLng mFriendLocation;
 
     private FirebaseAuth mFirebaseAuth;
     private FirebaseUser mUser;
@@ -68,7 +67,7 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback,
 
     // Firebase instance variables
     private DatabaseReference mFirebaseDatabaseReference;
-    private DatabaseReference mChildLocation;
+    //private DatabaseReference mChildLocation;
     private DatabaseReference mLocNodeRef;
 
     private DatabaseReference mLocNode;
@@ -90,6 +89,7 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback,
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
+
         // Google maps connection
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -103,7 +103,7 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback,
         mFirebaseDatabaseReference = FirebaseDatabase.getInstance().getReference();
 
 
-        mChildLocation = mFirebaseDatabaseReference.child("Convo's").child(childNode);
+        //mChildLocation = mFirebaseDatabaseReference.child("Convo's").child(childNode);
 
 
         //User Location node
@@ -196,11 +196,9 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback,
 
         createLocationRequest();
 
+        // Google API DOCMENTS https://developers.google.com/android/reference/com/google/android/gms/location/SettingsApi
         LocationSettingsRequest.Builder lBuilder = new LocationSettingsRequest.Builder()
                 .addLocationRequest(mLocationRequest);
-
-        //lBuilder.setAlwaysShow(true);
-
         PendingResult<LocationSettingsResult> result =
                 LocationServices.SettingsApi.checkLocationSettings(mGoogleApiClient, lBuilder.build());
         result.setResultCallback(new ResultCallback<LocationSettingsResult>() {
@@ -246,9 +244,9 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback,
 
                     String friendName = userLoc.getName();
 
-                    mfriendLocation = new LatLng(friendLatitude, friendLongitude);
+                    mFriendLocation = new LatLng(friendLatitude, friendLongitude);
 
-                    mMap.addMarker(new MarkerOptions().position(mfriendLocation).title(friendName));
+                    mMap.addMarker(new MarkerOptions().position(mFriendLocation).title(friendName));
 
 
                 }
@@ -273,10 +271,15 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback,
                         locationUpdates();
                         break;
                     case Activity.RESULT_CANCELED:
+                        Intent i = new Intent(Maps.this, ReplyRecycler.class);
+                        i.putExtra("uniqueIdMaps", childNode);
+                        startActivity(i);
                 }
         }
 
     }
+
+
 
     @Override
     public void onConnectionSuspended(int cause) {

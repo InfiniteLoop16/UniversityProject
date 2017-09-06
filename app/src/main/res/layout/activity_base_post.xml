@@ -6,6 +6,17 @@
     android:layout_height="match_parent"
     tools:context="com.example.android.universityproject.BasePostActivity">
 
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/my_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        android:titleTextColor="@color/text"
+        android:elevation="4dp"
+        android:theme="@style/AppTheme.MyToolbar"
+        app:theme="@style/AppTheme.MyToolbar"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
+
     <EditText
         android:id="@+id/TitleBox"
         android:layout_width="0dp"
@@ -18,8 +29,8 @@
         android:layout_marginTop="8dp"
         tools:layout_constraintLeft_creator="1"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:hint="Title"/>
+        app:layout_constraintTop_toBottomOf="@id/my_toolbar"
+        android:hint="@string/post_title"/>
 
     <EditText
         android:id="@+id/BodyBox"
@@ -32,7 +43,7 @@
         app:layout_constraintRight_toRightOf="parent"
         tools:layout_constraintLeft_creator="1"
         app:layout_constraintLeft_toLeftOf="parent"
-        android:hint="Body"/>
+        android:hint="@string/post_body"/>
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/Send_Post"
