@@ -31,7 +31,6 @@ public class PostRecyclerActivity extends AppCompatActivity {
     private LinearLayoutManager mLayoutManager;
     private DatabaseReference dataRef;
 
-    private static final int RC_SIGN_IN = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,10 +72,6 @@ public class PostRecyclerActivity extends AppCompatActivity {
         mRecyclerView.setAdapter(mAdapter);
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-    }
 
     private View.OnClickListener startNewPost = new View.OnClickListener() {
         @Override
@@ -115,5 +110,12 @@ public class PostRecyclerActivity extends AppCompatActivity {
                 return super.onOptionsItemSelected(item);
 
         }
+    }
+
+    @Override
+    public void onBackPressed(){
+        super.onBackPressed();
+        startActivity(new Intent(PostRecyclerActivity.this,MainActivity.class));
+        finish();
     }
 }

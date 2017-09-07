@@ -24,6 +24,8 @@ import com.google.firebase.auth.GoogleAuthProvider;
 
 import java.util.Arrays;
 
+import static android.R.attr.id;
+
 public class MainActivity extends AppCompatActivity {
 
 
@@ -31,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
     private GoogleApiClient mGoogleApiClient;
 
     private static final int RC_SIGN_IN = 1;
+    private int Flag = 1;
 
     // Firebase Instance Variables
     private FirebaseAuth mFirebaseAuth;
@@ -44,8 +47,8 @@ public class MainActivity extends AppCompatActivity {
         /*SignInButton logIn = (SignInButton) findViewById(R.id.sign_in_button);
         logIn.setOnClickListener(logInSwitch);*/
 
-        Button logOutButton = (Button) findViewById(R.id.sign_out_button);
-        logOutButton.setOnClickListener(logOut);
+        /*Button logOutButton = (Button) findViewById(R.id.sign_out_button);
+        logOutButton.setOnClickListener(logOut);*/
 
 
             mFirebaseAuth = FirebaseAuth.getInstance();
@@ -147,16 +150,16 @@ public class MainActivity extends AppCompatActivity {
                 return;
             }else{
                 if(response == null){
-                    Toast toast = Toast.makeText(MainActivity.this, "Cancelled", Toast.LENGTH_SHORT);
+                    Toast toast = Toast.makeText(MainActivity.this, "Bye bye", Toast.LENGTH_SHORT);
                     toast.show();
+                    finish();
                     return;
                 }
                 if (response.getErrorCode() == ErrorCodes.NO_NETWORK) {
-                    Toast toast = Toast.makeText(MainActivity.this, "No network", Toast.LENGTH_SHORT);
+                    Toast toast = Toast.makeText(MainActivity.this, "No internet access. Please check your connection", Toast.LENGTH_SHORT);
                     toast.show();
                     return;
                 }
-
                 if (response.getErrorCode() == ErrorCodes.UNKNOWN_ERROR) {
                     Toast toast = Toast.makeText(MainActivity.this, "Unknown Error", Toast.LENGTH_SHORT);
                     toast.show();
@@ -165,6 +168,12 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
+
+    /*@Override
+    public void onBackPressed(){
+        super.onBackPressed();
+        MainActivity.this.finishAffinity();
+    }*/
 
     // Authenticates users with the Firebase database. Provided by Google Firebase Android documentation.
     // If authentication fails, then the user is presented with a toast.

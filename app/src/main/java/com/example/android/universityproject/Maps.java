@@ -274,6 +274,7 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback,
                         Intent i = new Intent(Maps.this, ReplyRecycler.class);
                         i.putExtra("uniqueIdMaps", childNode);
                         startActivity(i);
+                        finish();
                 }
         }
 

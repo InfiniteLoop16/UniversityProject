@@ -84,11 +84,6 @@ public class ReplyRecycler extends AppCompatActivity {
         mRecyclerView.setAdapter(mFirebaseAdapter);
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-    }
-
     private View.OnClickListener startReplyPost = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -136,6 +131,13 @@ public class ReplyRecycler extends AppCompatActivity {
                 return super.onOptionsItemSelected(item);
 
         }
+    }
+
+    @Override
+    public void onBackPressed(){
+        super.onBackPressed();
+        startActivity(new Intent(ReplyRecycler.this,PostRecyclerActivity.class));
+        finish();
     }
 
 

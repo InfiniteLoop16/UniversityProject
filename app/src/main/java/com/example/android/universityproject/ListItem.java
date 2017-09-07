@@ -27,8 +27,7 @@ public class ListItem {
         mTitle = title;
     }
 
-    public String getBody(){
-        return mBody;
+    public String getBody(){return mBody;
     }
 
     public void setBody(String body){

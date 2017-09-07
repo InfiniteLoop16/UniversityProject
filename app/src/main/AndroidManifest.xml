@@ -53,15 +53,21 @@
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Maps" />
-        <activity android:name=".PostRecyclerActivity" />
+        <activity android:name=".Maps"
+            android:launchMode="singleInstance"/>/>
+
+        <activity android:name=".PostRecyclerActivity"
+            android:launchMode="singleInstance"/>
+
         <activity android:name=".NewPost"
             android:windowSoftInputMode="stateVisible|adjustResize"/>
-        <activity android:name=".ReplyRecycler" />
+
+        <activity android:name=".ReplyRecycler"
+            android:launchMode="singleInstance"/>/>
+
         <activity android:name=".ReplyPost"
             android:windowSoftInputMode="stateVisible|adjustResize"/>
         <activity
