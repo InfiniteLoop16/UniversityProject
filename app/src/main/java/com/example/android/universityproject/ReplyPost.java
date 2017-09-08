@@ -21,6 +21,7 @@ public class ReplyPost extends BasePostActivity{
         DatabaseConnect();
         super.onCreate(savedInstanceState);
 
+
     }
 
     @Override
@@ -39,6 +40,15 @@ public class ReplyPost extends BasePostActivity{
         keyId = myRef.getKey();
         newPost.setId(keyId);
         myRef.setValue(newPost);
+        Intent i = new Intent(ReplyPost.this, ReplyRecycler.class);
+        i.putExtra("uniqueIdReplyPost", childNode);
+        startActivity(i);
+    }
+
+    @Override
+    public void onBackPressed(){
+        startActivity(new Intent(ReplyPost.this,ReplyRecycler.class));
+        finish();
     }
 
 }

@@ -78,6 +78,7 @@ public class PostRecyclerActivity extends AppCompatActivity {
         public void onClick(View v) {
             Intent i = new Intent(v.getContext(), NewPost.class);
             startActivity(i);
+            finish();
 
         }
     };

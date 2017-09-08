@@ -39,11 +39,16 @@ public class ReplyRecycler extends AppCompatActivity {
 
 
         // Gets the putExtra from the CardView. This is the Unique push ID which forms the node key.
+        // The if statement is required depending on whether ReplyRecycler is started from PostRecycler,
+        // ReplyPostRecycler or Maps.
         Intent i = getIntent();
-        if(i.getStringExtra("uniqueID")==null){
-            searcher = i.getStringExtra("uniqueIdMaps");
+        if(i.getStringExtra("uniqueID")!=null){
+            searcher = i.getStringExtra("uniqueID");
+        }else if(i.getStringExtra("uniqueIdMaps")!=null){
+        searcher = i.getStringExtra("uniqueIdMaps");
         }else{
-        searcher = i.getStringExtra("uniqueID");}
+            searcher = i.getStringExtra("uniqueIdReplyPost");
+        }
 
         dataRef = FirebaseDatabase.getInstance().getReference();
         dataRefChild = dataRef.child("Convo's").child(searcher);
@@ -90,6 +95,7 @@ public class ReplyRecycler extends AppCompatActivity {
             Intent i = new Intent(v.getContext(), ReplyPost.class);
             i.putExtra("ChildNode", searcher);
             startActivity(i);
+            finish();
 
         }
     };
@@ -100,6 +106,7 @@ public class ReplyRecycler extends AppCompatActivity {
             Intent i = new Intent(v.getContext(), Maps.class);
             i.putExtra("ChildNode", searcher);
             startActivity(i);
+            finish();
         }
     };
 
