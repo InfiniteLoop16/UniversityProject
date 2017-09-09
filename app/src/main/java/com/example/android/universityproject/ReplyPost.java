@@ -47,7 +47,8 @@ public class ReplyPost extends BasePostActivity{
 
     @Override
     public void onBackPressed(){
-        startActivity(new Intent(ReplyPost.this,ReplyRecycler.class));
+        Intent i = new Intent(ReplyPost.this, ReplyRecycler.class);
+        i.putExtra("uniqueIdReplyPost", childNode);
         finish();
     }
 

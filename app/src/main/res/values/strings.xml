@@ -21,8 +21,8 @@
         You have successfully logged out of your account.
     </string>
 
-    <string name="post_title">Title</string>
-    <string name="post_body">Body</string>
+    <string name="post_title">Title:</string>
+    <string name="post_body">Body:</string>
     <string name="button_sign_out">Sign out</string>
 
 </resources>

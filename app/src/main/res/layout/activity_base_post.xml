@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/backgrouund_colour"
     tools:context="com.example.android.universityproject.BasePostActivity">
 
     <android.support.v7.widget.Toolbar
@@ -19,6 +20,7 @@
 
     <EditText
         android:id="@+id/TitleBox"
+        android:textColor="@android:color/white"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         tools:layout_constraintTop_creator="1"
@@ -30,11 +32,13 @@
         tools:layout_constraintLeft_creator="1"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@id/my_toolbar"
-        android:hint="@string/post_title"/>
+        android:hint="@string/post_title"
+        android:textColorHint="@android:color/white"/>
 
     <EditText
         android:id="@+id/BodyBox"
         app:layout_constraintTop_toBottomOf="@+id/TitleBox"
+        android:textColor="@android:color/white"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         tools:layout_constraintRight_creator="1"
@@ -43,7 +47,8 @@
         app:layout_constraintRight_toRightOf="parent"
         tools:layout_constraintLeft_creator="1"
         app:layout_constraintLeft_toLeftOf="parent"
-        android:hint="@string/post_body"/>
+        android:hint="@string/post_body"
+        android:textColorHint="@android:color/white"/>
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/Send_Post"

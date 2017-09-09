@@ -71,7 +71,7 @@ public abstract class BasePostActivity extends AppCompatActivity {
         @Override
         public void onClick(View v) {
             setPostDetails();
-            if (newPost.getTitle().length() >= 1) {
+            if (newPost.getTitle().toString().replaceAll("\\s", "").length() > 0) {
                 sendPost();
                 finish();
             } else {

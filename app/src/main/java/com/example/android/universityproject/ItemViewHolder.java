@@ -6,13 +6,16 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
 /**
  * Created by Jake on 09/08/2017.
  */
 
 public class ItemViewHolder extends RecyclerView.ViewHolder {
     private final TextView mTitleFiled;
-    //private final TextView mBodyField;
+    private final TextView mBodyField;
     private final TextView mUserNameField;
     private final TextView mTimeStampField;
     //private final Button replyButton;
@@ -21,15 +24,17 @@ public class ItemViewHolder extends RecyclerView.ViewHolder {
 
 
 
+
     public ItemViewHolder(View itemView){
         super(itemView);
         mTitleFiled = (TextView) itemView.findViewById(R.id.textViewTitle);
-        //mBodyField = (TextView) itemView.findViewById(R.id.textViewBody);
+        mBodyField = (TextView) itemView.findViewById(R.id.textViewBody);
         mUserNameField = (TextView) itemView.findViewById(R.id.userNameView);
         mTimeStampField = (TextView) itemView.findViewById(R.id.textViewTime);
 
         Card = itemView.findViewById(R.id.cards);
         Card.setOnClickListener(replyToMessage);
+
 
         /*replyButton = (Button) itemView.findViewById(R.id.replyButtonField);
         replyButton.setOnClickListener(replyToMessage);*/
@@ -40,7 +45,7 @@ public class ItemViewHolder extends RecyclerView.ViewHolder {
     public void bind(ListItem post){
         // Populates the fields of the card in the recycler view.
         setTitle(post.getTitle());
-        //setBody(post.getBody());
+        setBody(post.getBody());
         setUserName(post.getUserName());
         setTimeAndDate(post.getTimeAndDateSent());
 
@@ -55,9 +60,9 @@ public class ItemViewHolder extends RecyclerView.ViewHolder {
         mTitleFiled.setText(title);
     }
 
-    /*private void setBody(String body){
+    private void setBody(String body){
         mBodyField.setText(body);
-    }*/
+    }
 
     private void setUserName(String uName){mUserNameField.setText(uName);}
 
