@@ -50,26 +50,32 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyBjHV1Mm9NEwdTvIKwCU4Uw-WaT7z7PmFA" />
 
-        <activity android:name=".MainActivity">
+        <activity android:name=".MainActivity" android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
         </activity>
         <activity android:name=".Maps"
-            android:launchMode="singleInstance"/>/>
+            android:launchMode="singleInstance"
+            android:screenOrientation="portrait"/>
 
         <activity android:name=".PostRecyclerActivity"
-            android:launchMode="singleInstance"/>
+            android:launchMode="singleInstance"
+            android:screenOrientation="portrait"/>
 
         <activity android:name=".NewPost"
-            android:windowSoftInputMode="stateVisible|adjustResize"/>
+            android:windowSoftInputMode="stateVisible|adjustResize"
+            android:screenOrientation="portrait"/>
 
         <activity android:name=".ReplyRecycler"
-            android:launchMode="singleInstance"/>/>
+            android:launchMode="singleInstance"
+            android:screenOrientation="portrait"/>
 
         <activity android:name=".ReplyPost"
-            android:windowSoftInputMode="stateVisible|adjustResize"/>
+            android:windowSoftInputMode="stateVisible|adjustResize"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".BasePostActivity"
             android:label="@string/title_activity_base_post" />

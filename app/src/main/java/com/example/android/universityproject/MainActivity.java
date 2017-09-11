@@ -169,12 +169,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    /*@Override
-    public void onBackPressed(){
-        super.onBackPressed();
-        MainActivity.this.finishAffinity();
-    }*/
-
     // Authenticates users with the Firebase database. Provided by Google Firebase Android documentation.
     // If authentication fails, then the user is presented with a toast.
     // A user receives an authentication token from Firebase. There information is recorded in firebase.

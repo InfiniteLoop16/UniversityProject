@@ -1,6 +1,7 @@
 package com.example.android.universityproject;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -63,14 +64,26 @@ public class ReplyRecycler extends AppCompatActivity {
 
 
         // Creation of FAB onClick Listener for reply post
-        FloatingActionButton addPost = (FloatingActionButton) findViewById(R.id.add_Reply_Post);
-        addPost.setOnClickListener(startReplyPost);
+        final FloatingActionButton replyPost = (FloatingActionButton) findViewById(R.id.add_Reply_Post);
+        replyPost.setOnClickListener(startReplyPost);
 
         // Creation of FAB onClick Listener to share location
-        FloatingActionButton shareLocation = (FloatingActionButton) findViewById(R.id.share_Location);
+        final FloatingActionButton shareLocation = (FloatingActionButton) findViewById(R.id.share_Location);
         shareLocation.setOnClickListener(startShareLocation);
 
 
+        // Hides the floating action buttons when scrolling down, revelas them when scrolling up.
+        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener(){
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy){
+                if (dy > 0){
+                    replyPost.hide();
+                    shareLocation.hide();}
+                else if (dy < 0){
+                    shareLocation.show();
+                    shareLocation.show();}
+            }
+        });
 
 
         // FirebaseRecycler Adapter Subclass.
@@ -83,7 +96,6 @@ public class ReplyRecycler extends AppCompatActivity {
             @Override
             protected void populateViewHolder(ReplyItemViewHolder viewHolder, ListItem post, int position) {
                 viewHolder.bind(post);
-
             }
         };
         mRecyclerView.setAdapter(mFirebaseAdapter);

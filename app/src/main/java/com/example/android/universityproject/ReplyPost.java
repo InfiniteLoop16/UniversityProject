@@ -2,6 +2,8 @@ package com.example.android.universityproject;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.Toast;
+
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -35,14 +37,20 @@ public class ReplyPost extends BasePostActivity{
 
 
     @Override
-    public void sendPost(){
-        DatabaseReference myRef = mDatabaseChild.push();
-        keyId = myRef.getKey();
-        newPost.setId(keyId);
-        myRef.setValue(newPost);
-        Intent i = new Intent(ReplyPost.this, ReplyRecycler.class);
-        i.putExtra("uniqueIdReplyPost", childNode);
-        startActivity(i);
+    public void sendPost() {
+        if (newPost.getBody().toString().replaceAll("\\s", "").length() > 0) {
+            DatabaseReference myRef = mDatabaseChild.push();
+            keyId = myRef.getKey();
+            newPost.setId(keyId);
+            myRef.setValue(newPost);
+            Intent i = new Intent(ReplyPost.this, ReplyRecycler.class);
+            i.putExtra("uniqueIdReplyPost", childNode);
+            startActivity(i);
+        } else {
+            Toast toast = Toast.makeText(ReplyPost.this, R.string.reply_post_warning, Toast.LENGTH_SHORT);
+            toast.show();
+
+        }
     }
 
     @Override

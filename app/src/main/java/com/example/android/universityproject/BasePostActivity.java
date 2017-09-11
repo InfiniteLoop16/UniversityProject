@@ -71,13 +71,7 @@ public abstract class BasePostActivity extends AppCompatActivity {
         @Override
         public void onClick(View v) {
             setPostDetails();
-            if (newPost.getTitle().toString().replaceAll("\\s", "").length() > 0) {
-                sendPost();
-                finish();
-            } else {
-                Toast toast = Toast.makeText(BasePostActivity.this, R.string.post_warning, Toast.LENGTH_SHORT);
-                toast.show();
-            }
+            sendPost();
         }
 
         };
@@ -85,8 +79,8 @@ public abstract class BasePostActivity extends AppCompatActivity {
 
 
     public void setPostDetails(){
-        String title = eTitle.getText().toString();
-        String body = eBody.getText().toString();
+        String title = eTitle.getText().toString().trim();
+        String body = eBody.getText().toString().trim();
         newPost.setTitle(title);
         newPost.setBody(body);
         mTimeAndDate = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss a").format(new Date());

@@ -17,6 +17,9 @@ import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -44,6 +47,8 @@ public class PostRecyclerActivity extends AppCompatActivity {
         // Creates reference link to database.
         dataRef = FirebaseDatabase.getInstance().getReference();
 
+
+
         // Creates the RecyclerView. Recent post located at the top.
         mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view_tutorial);
         mRecyclerView.setHasFixedSize(true);
@@ -53,8 +58,19 @@ public class PostRecyclerActivity extends AppCompatActivity {
         mRecyclerView.setLayoutManager(mLayoutManager);
 
         // Creation of FAB onClick Listener
-        FloatingActionButton addPost = (FloatingActionButton) findViewById(R.id.add_Post);
+        final FloatingActionButton addPost = (FloatingActionButton) findViewById(R.id.add_Post);
         addPost.setOnClickListener(startNewPost);
+
+        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener(){
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy){
+                if (dy > 0){
+                    addPost.hide();}
+                else if (dy < 0){
+                    addPost.show();}
+            }
+        });
+
 
 
         mAdapter = new FirebaseRecyclerAdapter<ListItem, ItemViewHolder>(
@@ -71,6 +87,7 @@ public class PostRecyclerActivity extends AppCompatActivity {
         };
         mRecyclerView.setAdapter(mAdapter);
     }
+
 
 
     private View.OnClickListener startNewPost = new View.OnClickListener() {

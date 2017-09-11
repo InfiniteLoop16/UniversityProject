@@ -133,6 +133,14 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback,
 
     }
 
+    @Override
+    public void onBackPressed(){
+        Intent i = new Intent(Maps.this, ReplyRecycler.class);
+        i.putExtra("uniqueIdMaps", childNode);
+        startActivity(i);
+        finish();
+    }
+
 
     // Method that creates a map and places a pin over london.
     // Calls the request location method.
@@ -156,8 +164,6 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback,
         LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
 
 
-
-
         mLocNodeRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -166,22 +172,17 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback,
                     UserLocation uLoc = SnapShot.getValue(UserLocation.class);
                     if (dataSnapshot.hasChild(uLoc.getName())) {
                         mLocNodeRef.child(uLoc.getName()).removeValue();
-
-
                     }
                 }
             }
-
-
             @Override
             public void onCancelled(DatabaseError databaseError) {
 
             }
         });
-
         mGoogleApiClient.disconnect();
-
         super.onStop();
+
 
     }
 
@@ -348,8 +349,6 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback,
             // This was mLocationDataRef!!!
             mLocNodeRef.child(uLocation.getName()).setValue(uLocation);
 
-            Toast toast = Toast.makeText(Maps.this, Double.toString(latitude) + Double.toString(longitude), Toast.LENGTH_SHORT);
-            toast.show();
         }
 
     }
