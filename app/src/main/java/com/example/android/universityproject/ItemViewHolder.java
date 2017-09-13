@@ -1,6 +1,8 @@
 package com.example.android.universityproject;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.Button;
@@ -28,17 +30,21 @@ public class ItemViewHolder extends RecyclerView.ViewHolder {
 
 
 
+
     public ItemViewHolder(View itemView){
         super(itemView);
         mTitleFiled = (TextView) itemView.findViewById(R.id.textViewTitle);
         mBodyField = (TextView) itemView.findViewById(R.id.textViewBody);
         mUserNameField = (TextView) itemView.findViewById(R.id.userNameView);
         mTimeStampField = (TextView) itemView.findViewById(R.id.textViewTime);
+
         mCountField = (TextView) itemView.findViewById(R.id.textViewCount);
 
 
         Card = itemView.findViewById(R.id.cards);
         Card.setOnClickListener(replyToMessage);
+
+
 
 
 
@@ -70,7 +76,6 @@ public class ItemViewHolder extends RecyclerView.ViewHolder {
     private void setTimeAndDate(String mCurrentTime){
         mTimeStampField.setText(mCurrentTime);
     }
-
 
     // Adds 'Extras' to the creation of the intent. These extras are available in the
     // the activity that is opened.

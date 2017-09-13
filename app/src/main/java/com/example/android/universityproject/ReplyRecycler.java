@@ -101,10 +101,11 @@ public class ReplyRecycler extends AppCompatActivity {
 
             @Override
             protected void populateViewHolder(ReplyItemViewHolder viewHolder, ListItem post, int position) {
-                viewHolder.bind(post);
                 if(position == 0){
+                    viewHolder.bindOriginal(post);
                     viewHolder.setCardColour();
-
+                }else{
+                    viewHolder.bind(post);
                 }
 
             }

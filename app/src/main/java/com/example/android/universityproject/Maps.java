@@ -18,7 +18,9 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.FusedLocationProviderApi;
 import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationAvailability;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
@@ -27,7 +29,9 @@ import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResult;
 import com.google.android.gms.location.LocationSettingsStates;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.LocationSource;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
@@ -43,6 +47,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 
+import static android.R.attr.data;
 
 
 public class Maps extends FragmentActivity implements OnMapReadyCallback,
@@ -58,9 +63,9 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback,
 
     private GoogleApiClient mGoogleApiClient;
 
-    private FusedLocationProviderClient mFusedLocation;
 
     private LocationRequest mLocationRequest;
+
     private LatLng mFriendLocation;
 
     private FirebaseAuth mFirebaseAuth;
@@ -68,7 +73,6 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback,
 
 
     // Firebase instance variables
-    private DatabaseReference mFirebaseDatabaseReference;
     //private DatabaseReference mChildLocation;
     private DatabaseReference mLocNodeRef;
 
@@ -78,7 +82,9 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback,
 
     private UserLocation uLocation;
 
-    private LocationCallback mLocationCallback;
+    private FusedLocationProviderClient locAPI;
+
+
 
 
 
@@ -102,7 +108,7 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback,
         childNode = i.getStringExtra("ChildNode");
 
 
-        mFirebaseDatabaseReference = FirebaseDatabase.getInstance().getReference();
+        DatabaseReference mFirebaseDatabaseReference = FirebaseDatabase.getInstance().getReference();
 
 
 
@@ -119,17 +125,12 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback,
         mUser = mFirebaseAuth.getCurrentUser();
 
 
-        mFusedLocation = LocationServices.getFusedLocationProviderClient(this);
-
-
         initializeGoogleApiClient();
 
 
-        mLocationCallback = new LocationCallback();
 
         uLocation = new UserLocation();
         mLocationRequest = new LocationRequest();
-
 
 
     }
@@ -188,6 +189,8 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback,
     }
 
 
+
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -200,6 +203,7 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback,
         createLocationRequest();
 
         // Google API DOCMENTS https://developers.google.com/android/reference/com/google/android/gms/location/SettingsApi
+        // Creates pop up requesting user turn on GPS, if their GPS is off.
         LocationSettingsRequest.Builder lBuilder = new LocationSettingsRequest.Builder()
                 .addLocationRequest(mLocationRequest);
         PendingResult<LocationSettingsResult> result =
@@ -224,12 +228,10 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback,
 
                         break;
                 }
-
             }
         });
 
         locationUpdates();
-
 
         // mLoNodeRef is the UserLocation Node.
         mLocNodeRef.addValueEventListener(new ValueEventListener() {
@@ -238,28 +240,16 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback,
                 UserLocation userLoc;
                 mMap.clear();
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-
-
                     userLoc = snapshot.getValue(UserLocation.class);
-
                     double friendLatitude = userLoc.getLatitude();
                     double friendLongitude = userLoc.getLongitude();
-
                     String friendName = userLoc.getName();
-
                     mFriendLocation = new LatLng(friendLatitude, friendLongitude);
-
                     mMap.addMarker(new MarkerOptions().position(mFriendLocation).title(friendName));
-
-
                 }
             }
-
-
             @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
+            public void onCancelled(DatabaseError databaseError) {           }
         });
 
     }
@@ -267,6 +257,7 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback,
     // Callback method in response to LocaionSettings builder.
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+
         switch (requestCode) {
             case REQUEST_LOCATION:
                 switch (resultCode) {

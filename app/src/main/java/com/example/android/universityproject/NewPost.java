@@ -16,11 +16,13 @@ public class NewPost extends BasePostActivity {
 
 
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setContentView(R.layout.activity_base_post);
         DatabaseConnect();
         super.onCreate(savedInstanceState);
+
 
     }
 

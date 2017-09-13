@@ -30,7 +30,7 @@ public class ReplyItemViewHolder extends RecyclerView.ViewHolder{
         mCardView = (CardView) itemView.findViewById(R.id.reply_card);
     }
 
-    public void bind(ListItem post){
+    public void bindOriginal(ListItem post){
         setTitle(post.getTitle());
         setBody(post.getBody());
         setUserName(post.getUserName());
@@ -38,9 +38,16 @@ public class ReplyItemViewHolder extends RecyclerView.ViewHolder{
 
     }
 
+    public void bind(ListItem post){
+        mTitleFiled.setVisibility(View.GONE);
+        setBody(post.getBody());
+        setUserName(post.getUserName());
+        setTimeAndDate(post.getTimeAndDateSent());
+    }
+
 
     private void setTitle(String title){
-        mTitleFiled.setText(title);
+       mTitleFiled.setText(title);
     }
 
     private void setBody(String body){

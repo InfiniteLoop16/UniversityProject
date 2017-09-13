@@ -2,6 +2,8 @@ package com.example.android.universityproject;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.database.DatabaseReference;
@@ -12,6 +14,7 @@ public class ReplyPost extends BasePostActivity{
 
     private DatabaseReference mDatabaseChild;
     private String childNode;
+    private TextView mTitleField;
 
 
 
@@ -22,6 +25,8 @@ public class ReplyPost extends BasePostActivity{
         childNode = i.getStringExtra("ChildNode");
         DatabaseConnect();
         super.onCreate(savedInstanceState);
+        mTitleField = (TextView)findViewById(R.id.TitleBox);
+        mTitleField.setVisibility(View.GONE);
 
 
     }
@@ -53,10 +58,14 @@ public class ReplyPost extends BasePostActivity{
         }
     }
 
+
+
+
     @Override
     public void onBackPressed(){
         Intent i = new Intent(ReplyPost.this, ReplyRecycler.class);
         i.putExtra("uniqueIdReplyPost", childNode);
+        startActivity(i);
         finish();
     }
 
