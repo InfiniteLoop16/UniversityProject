@@ -73,6 +73,8 @@ public class PostRecyclerActivity extends AppCompatActivity {
 
 
 
+
+
         mAdapter = new FirebaseRecyclerAdapter<ListItem, ItemViewHolder>(
                 ListItem.class,
                 R.layout.post_recycler_item,

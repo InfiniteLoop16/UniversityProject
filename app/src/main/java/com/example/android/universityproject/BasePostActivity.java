@@ -37,6 +37,7 @@ public abstract class BasePostActivity extends AppCompatActivity {
     protected FloatingActionButton sendPost;
 
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

@@ -14,6 +14,8 @@ public class NewPost extends BasePostActivity {
     private DatabaseReference mDatabaseChat;
 
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setContentView(R.layout.activity_base_post);
@@ -24,6 +26,9 @@ public class NewPost extends BasePostActivity {
 
     @Override
     public void DatabaseConnect(){
+
+
+
         mFirebaseDatabaseReference = FirebaseDatabase.getInstance().getReference();
         mDatabaseChat = mFirebaseDatabaseReference.child("chat");
         mDatabaseConvo = mFirebaseDatabaseReference.child("Convo's");

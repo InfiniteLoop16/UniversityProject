@@ -30,9 +30,11 @@ import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -103,7 +105,6 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback,
         mFirebaseDatabaseReference = FirebaseDatabase.getInstance().getReference();
 
 
-        //mChildLocation = mFirebaseDatabaseReference.child("Convo's").child(childNode);
 
 
         //User Location node
@@ -185,6 +186,7 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback,
 
 
     }
+
 
     @Override
     protected void onResume() {
@@ -315,7 +317,7 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback,
     // Details the interval in which updates to location should be made.
     protected void createLocationRequest() {
 
-        mLocationRequest.setInterval(10000);
+        mLocationRequest.setInterval(50000);
         mLocationRequest.setFastestInterval(1000);
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
     }
@@ -352,6 +354,8 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback,
         }
 
     }
+
+
 
     // Method that checks the user has given the application permission to use location services.
     // If permission has already been requested, then location services is enabled.

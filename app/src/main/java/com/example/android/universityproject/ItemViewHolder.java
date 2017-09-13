@@ -79,8 +79,6 @@ public class ItemViewHolder extends RecyclerView.ViewHolder {
         @Override
         public void onClick(View v) {
             Intent i = new Intent(v.getContext(), ReplyRecycler.class);
-            Intent post = new Intent(v.getContext(), PostRecyclerActivity.class);
-            post.putExtra("uniqueID", id);
             i.putExtra("uniqueID",id);
             v.getContext().startActivity(i);
 

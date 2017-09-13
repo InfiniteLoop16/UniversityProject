@@ -6,12 +6,14 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.firebase.ui.auth.AuthUI;
@@ -55,6 +57,9 @@ public class ReplyRecycler extends AppCompatActivity {
         dataRefChild = dataRef.child("Convo's").child(searcher);
 
 
+
+
+
         // Create RecyclerView
         mLayoutManager = new LinearLayoutManager(this);
 
@@ -81,7 +86,7 @@ public class ReplyRecycler extends AppCompatActivity {
                     shareLocation.hide();}
                 else if (dy < 0){
                     shareLocation.show();
-                    shareLocation.show();}
+                    replyPost.show();}
             }
         });
 
@@ -91,11 +96,17 @@ public class ReplyRecycler extends AppCompatActivity {
                 ListItem.class,
                 R.layout.reply_recycler_item,
                 ReplyItemViewHolder.class,
-                dataRefChild) {
+                dataRefChild){
+
 
             @Override
             protected void populateViewHolder(ReplyItemViewHolder viewHolder, ListItem post, int position) {
                 viewHolder.bind(post);
+                if(position == 0){
+                    viewHolder.setCardColour();
+
+                }
+
             }
         };
         mRecyclerView.setAdapter(mFirebaseAdapter);
