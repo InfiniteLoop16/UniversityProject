@@ -14,8 +14,10 @@ public class ListItem {
     private String mUniqueKey;
 
 
+    /**
+     * Default constructor required for Firebase to serialize Java POJO to JSON
+     */
     public ListItem(){
-        // Needed for Firebase
     }
 
 

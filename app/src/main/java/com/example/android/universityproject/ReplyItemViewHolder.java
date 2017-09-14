@@ -20,7 +20,10 @@ public class ReplyItemViewHolder extends RecyclerView.ViewHolder{
     private final CardView mCardView;
 
 
-
+    /**
+     * ReplyItem constructor
+     * @param itemView: View being considered, The CardView within this viewHolder
+     */
     public ReplyItemViewHolder(View itemView){
         super(itemView);
         mTitleFiled = (TextView) itemView.findViewById(R.id.textViewReplyTitle);
@@ -30,25 +33,32 @@ public class ReplyItemViewHolder extends RecyclerView.ViewHolder{
         mCardView = (CardView) itemView.findViewById(R.id.reply_card);
     }
 
+
+    /**
+     * Method that populates the initial message in the reply recycler that created the thread
+     * @param post: The ListItem POJO
+     */
     public void bindOriginal(ListItem post){
         setTitle(post.getTitle());
         setBody(post.getBody());
         setUserName(post.getUserName());
         setTimeAndDate(post.getTimeAndDateSent());
-
     }
 
-    public void bind(ListItem post){
+    /**
+     * Method for populating the reply messages in the replyRecycler
+     * Removes the title field from the responses as the subject matter of the thread has already
+     * been established
+     * @param post
+     */
+    public void bindReplies(ListItem post){
         mTitleFiled.setVisibility(View.GONE);
         setBody(post.getBody());
         setUserName(post.getUserName());
         setTimeAndDate(post.getTimeAndDateSent());
     }
 
-
-    private void setTitle(String title){
-       mTitleFiled.setText(title);
-    }
+    private void setTitle(String title){ mTitleFiled.setText(title);    }
 
     private void setBody(String body){
         mBodyField.setText(body);
@@ -61,6 +71,10 @@ public class ReplyItemViewHolder extends RecyclerView.ViewHolder{
     }
 
 
+    /**
+     * Changes the colour of the cardView background
+     * Applied to initial message in replyRecycler
+     */
     public void setCardColour() {
         mTitleFiled.setBackgroundResource(R.color.original);
         mBodyField.setBackgroundResource(R.color.original);

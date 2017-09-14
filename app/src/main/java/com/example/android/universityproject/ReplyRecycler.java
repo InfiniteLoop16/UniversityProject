@@ -32,6 +32,9 @@ public class ReplyRecycler extends AppCompatActivity {
     private DatabaseReference dataRefChild;
     private String searcher;
 
+    private FloatingActionButton replyPost;
+    private FloatingActionButton shareLocation;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,28 +60,72 @@ public class ReplyRecycler extends AppCompatActivity {
         dataRefChild = dataRef.child("Convo's").child(searcher);
 
 
-
-
-
         // Create RecyclerView
         mLayoutManager = new LinearLayoutManager(this);
-
         mRecyclerView = (RecyclerView) findViewById(R.id.my_reply_recycler_view);
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
 
         // Creation of FAB onClick Listener for reply post
-        final FloatingActionButton replyPost = (FloatingActionButton) findViewById(R.id.add_Reply_Post);
+        replyPost = (FloatingActionButton) findViewById(R.id.add_Reply_Post);
         replyPost.setOnClickListener(startReplyPost);
 
         // Creation of FAB onClick Listener to share location
-        final FloatingActionButton shareLocation = (FloatingActionButton) findViewById(R.id.share_Location);
+        shareLocation = (FloatingActionButton) findViewById(R.id.share_Location);
         shareLocation.setOnClickListener(startShareLocation);
 
 
-        // Hides the floating action buttons when scrolling down, revelas them when scrolling up.
+        hideAndRevealFABS();
+
+
+
+
+        /**
+         * Instantiates the Firebase Recycler Adapter
+         * Takes the POJO class, layout file, viewholder class and the datbase refernce
+         * as arguments
+         */
+        mFirebaseAdapter = new FirebaseRecyclerAdapter<ListItem, ReplyItemViewHolder>(
+                ListItem.class,
+                R.layout.reply_recycler_item,
+                ReplyItemViewHolder.class,
+                dataRefChild){
+
+            /**
+             * Calls bind method from ReplyViewHolder class
+             * Binds the data from the database to the reply_recyler_item layout file
+             * If first oringal post, turn blue to differentiate from replies
+             * @param viewHolder: Holder for the Layout file
+             * @param post: ListItem class object storing information from database
+             * @param position: The position the ViewHolder has in the recyclerView
+             */
+            @Override
+            protected void populateViewHolder(ReplyItemViewHolder viewHolder, ListItem post, int position) {
+                if(position == 0){
+                    viewHolder.bindOriginal(post);
+                    viewHolder.setCardColour();
+                }else{
+                    viewHolder.bindReplies(post);
+                }
+            }
+        };
+
+        mRecyclerView.setAdapter(mFirebaseAdapter);
+    }
+
+
+    /**
+     * Hide floating action buttons when scrolling down
+     * Revleas floating action buttons when scrolling up
+     */
+    private void hideAndRevealFABS(){
         mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener(){
+            /**             *
+             * @param recyclerView: The recyclerView
+             * @param dx: Horizontal scrolling variable
+             * @param dy: Vertical scrolling variable
+             */
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy){
                 if (dy > 0){
@@ -89,30 +136,13 @@ public class ReplyRecycler extends AppCompatActivity {
                     replyPost.show();}
             }
         });
-
-
-        // FirebaseRecycler Adapter Subclass.
-        mFirebaseAdapter = new FirebaseRecyclerAdapter<ListItem, ReplyItemViewHolder>(
-                ListItem.class,
-                R.layout.reply_recycler_item,
-                ReplyItemViewHolder.class,
-                dataRefChild){
-
-
-            @Override
-            protected void populateViewHolder(ReplyItemViewHolder viewHolder, ListItem post, int position) {
-                if(position == 0){
-                    viewHolder.bindOriginal(post);
-                    viewHolder.setCardColour();
-                }else{
-                    viewHolder.bind(post);
-                }
-
-            }
-        };
-        mRecyclerView.setAdapter(mFirebaseAdapter);
     }
 
+
+    /**
+     * Starts the ReplyPOst activity
+     * Send the ReplyPost activity the pushID
+     */
     private View.OnClickListener startReplyPost = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -120,10 +150,14 @@ public class ReplyRecycler extends AppCompatActivity {
             i.putExtra("ChildNode", searcher);
             startActivity(i);
             finish();
-
         }
     };
 
+
+    /**
+     * Starts the maps activity
+     * Sends map activity the pushID reference
+     */
     private View.OnClickListener startShareLocation = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -134,12 +168,23 @@ public class ReplyRecycler extends AppCompatActivity {
         }
     };
 
+    /**
+     * Creates the toolbar and options menu
+     * @param menu: The menu bar
+     * @return: Returns the Action tool bar
+     */
     @Override
     public boolean onCreateOptionsMenu (Menu menu){
         getMenuInflater().inflate(R.menu.menu_items, menu);
         return super.onCreateOptionsMenu(menu);
     }
 
+    /**
+     * Provides functionality to thee overflow.
+     * Signout overflow option signs user out and takes them to main activity page
+     * @param item: The item within the overflow menu
+     * @return: Creates tool bar with overflow menu sign out option
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -164,6 +209,9 @@ public class ReplyRecycler extends AppCompatActivity {
         }
     }
 
+    /**
+     * Returns the user to the PostRecycler activity
+     */
     @Override
     public void onBackPressed(){
         super.onBackPressed();

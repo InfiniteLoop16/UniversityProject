@@ -14,9 +14,12 @@ public class NewPost extends BasePostActivity {
     private DatabaseReference mDatabaseChat;
 
 
-
-
-
+    /**
+     * Overrides parent class oncreate
+     * Ensures that its own DatabaseConnect method is used as opossed to the abstract method
+     * of its parent SuperClass.
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setContentView(R.layout.activity_base_post);
@@ -26,17 +29,27 @@ public class NewPost extends BasePostActivity {
 
     }
 
+    /**
+     * Method to connect to correct database nodes
+     * Sends post contents to chat and Convo's nodes in database
+     * Overrides parent class abstract method
+     */
     @Override
     public void DatabaseConnect(){
-
-
-
         mFirebaseDatabaseReference = FirebaseDatabase.getInstance().getReference();
         mDatabaseChat = mFirebaseDatabaseReference.child("chat");
         mDatabaseConvo = mFirebaseDatabaseReference.child("Convo's");
 
     }
 
+
+    /**
+     * Gets unique PushID from firebase push method
+     * and sends post to the specified nodes
+     * Starts the PostRescylcler activity once complete
+     *
+     * If no title is provided, then shows toast requesting title be added.
+     */
     @Override
     public void sendPost(){
         if (newPost.getTitle().toString().replaceAll("\\s", "").length() > 0) {
@@ -53,6 +66,10 @@ public class NewPost extends BasePostActivity {
         }
     }
 
+
+    /**
+     * Starts the PostRecycler activity when back is pressed
+     */
     @Override
     public void onBackPressed(){
         startActivity(new Intent(NewPost.this,PostRecyclerActivity.class));

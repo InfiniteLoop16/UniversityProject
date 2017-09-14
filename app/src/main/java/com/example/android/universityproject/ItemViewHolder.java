@@ -28,35 +28,32 @@ public class ItemViewHolder extends RecyclerView.ViewHolder {
     private String id;
 
 
-
-
-
+    /**
+     * Constructor
+     * @param itemView: View being considered, The CardView within this viewHolder
+     */
     public ItemViewHolder(View itemView){
         super(itemView);
         mTitleFiled = (TextView) itemView.findViewById(R.id.textViewTitle);
         mBodyField = (TextView) itemView.findViewById(R.id.textViewBody);
         mUserNameField = (TextView) itemView.findViewById(R.id.userNameView);
         mTimeStampField = (TextView) itemView.findViewById(R.id.textViewTime);
-
         mCountField = (TextView) itemView.findViewById(R.id.textViewCount);
-
-
         Card = itemView.findViewById(R.id.cards);
         Card.setOnClickListener(replyToMessage);
-
-
-
-
-
     }
 
+
+    /**
+     * Method to populate fields on cardView
+     * @param post: The ListItem POJO
+     */
     public void bind(ListItem post){
         // Populates the fields of the card in the recycler view.
         setTitle(post.getTitle());
         setBody(post.getBody());
         setUserName(post.getUserName());
         setTimeAndDate(post.getTimeAndDateSent());
-
         // id is passed to putExtra method so that it can be passed to the ReplyRecycler activity.
         // This allows for the creation of a recycler view for all the replies.
         id = post.getId();
@@ -64,8 +61,7 @@ public class ItemViewHolder extends RecyclerView.ViewHolder {
     }
 
 
-    private void setTitle(String title){
-        mTitleFiled.setText(title);}
+    private void setTitle(String title){mTitleFiled.setText(title);}
 
     private void setBody(String body){
         mBodyField.setText(body);
@@ -77,17 +73,17 @@ public class ItemViewHolder extends RecyclerView.ViewHolder {
         mTimeStampField.setText(mCurrentTime);
     }
 
-    // Adds 'Extras' to the creation of the intent. These extras are available in the
-    // the activity that is opened.
-    // Passing the unique push id to the reply recycler to show parent and child nodes
+    /**
+     * Sends pushID reference to the ReplyRecycler
+     * Utilised to avoid a Null pointer exception when starting the activity
+     * Called when carView in PostRecycler is clicked
+     */
     private View.OnClickListener replyToMessage = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             Intent i = new Intent(v.getContext(), ReplyRecycler.class);
             i.putExtra("uniqueID",id);
             v.getContext().startActivity(i);
-
-
         }
     };
 

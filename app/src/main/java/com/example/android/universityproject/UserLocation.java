@@ -10,9 +10,10 @@ public class UserLocation {
     public double longitude;
     public String name;
 
-    public UserLocation(){
-
-    }
+    /**
+     * Default constructor required for Firebase to serialize Java POJO to JSON
+     */
+    public UserLocation(){}
 
     public void setName(String name){
         this.name = name;

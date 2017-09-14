@@ -61,13 +61,20 @@ public abstract class BasePostActivity extends AppCompatActivity {
     }
 
 
-    // Abstract Method
+    /**
+     * Abstract method for completion by subclasses
+     */
     public void DatabaseConnect(){}
 
-    // Abstract Method
+    /**
+     * Abstract method for completion by subclass
+     */
     public void sendPost(){}
 
 
+    /**
+     * Onclick listener that sends post to database
+     */
     public View.OnClickListener despatchPost = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -78,7 +85,9 @@ public abstract class BasePostActivity extends AppCompatActivity {
         };
 
 
-
+    /**
+     * Method to set the ListItem class instance variable values
+     */
     public void setPostDetails(){
         String title = eTitle.getText().toString().trim();
         String body = eBody.getText().toString().trim();
@@ -92,12 +101,23 @@ public abstract class BasePostActivity extends AppCompatActivity {
     }
 
 
+    /**
+     * Creates the toolbar and options menu
+     * @param menu: The menu bar
+     * @return: Returns the Action tool bar
+     */
     @Override
     public boolean onCreateOptionsMenu (Menu menu){
         getMenuInflater().inflate(R.menu.menu_items, menu);
         return super.onCreateOptionsMenu(menu);
     }
 
+    /**
+     * Provides functionality to thee overflow.
+     * Signout overflow option signs user out and takes them to main activity page
+     * @param item: The item within the overflow menu
+     * @return: Creates tool bar with overflow menu sign out option
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {

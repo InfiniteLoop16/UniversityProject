@@ -18,10 +18,6 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
-import com.google.android.gms.location.FusedLocationProviderApi;
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationAvailability;
-import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
@@ -29,16 +25,12 @@ import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResult;
 import com.google.android.gms.location.LocationSettingsStates;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
-import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.LocationSource;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -48,6 +40,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 
 import static android.R.attr.data;
+import static com.example.android.universityproject.R.id.map;
 
 
 public class Maps extends FragmentActivity implements OnMapReadyCallback,
@@ -57,41 +50,21 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback,
 
     // Declare private global instance variable mMap of class GoogleMap
     private GoogleMap mMap;
-
-
     private Location dLocation;
-
-    private GoogleApiClient mGoogleApiClient;
-
-
+    private GoogleApiClient googleApiClient;
     private LocationRequest mLocationRequest;
-
     private LatLng mFriendLocation;
-
     private FirebaseAuth mFirebaseAuth;
     private FirebaseUser mUser;
-
-
     // Firebase instance variables
-    //private DatabaseReference mChildLocation;
     private DatabaseReference mLocNodeRef;
-
     private DatabaseReference mLocNode;
-
     private String childNode;
-
     private UserLocation uLocation;
-
-    private FusedLocationProviderClient locAPI;
-
-
-
-
-
-
-
     // Id to identify a location permission request.
     private static final int REQUEST_LOCATION = 1;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,7 +73,7 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback,
 
         // Google maps connection
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
+                .findFragmentById(map);
         mapFragment.getMapAsync(this);
 
         // Gets the putExtra from the ReplyRecycler view. This is placed into childNode.
@@ -109,68 +82,84 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback,
 
 
         DatabaseReference mFirebaseDatabaseReference = FirebaseDatabase.getInstance().getReference();
-
-
-
-
         //User Location node
         mLocNode = mFirebaseDatabaseReference.child("UserLocation");
-
         // Equals the unique ID node of that message, under the UserLocation node.
         // UserLocation { UniqueID
         mLocNodeRef = mLocNode.child(childNode);
-
-
         mFirebaseAuth = FirebaseAuth.getInstance();
         mUser = mFirebaseAuth.getCurrentUser();
-
-
-        initializeGoogleApiClient();
-
-
-
         uLocation = new UserLocation();
         mLocationRequest = new LocationRequest();
 
 
+        initializeGoogleApiClient();
+
     }
 
-    @Override
-    public void onBackPressed(){
-        Intent i = new Intent(Maps.this, ReplyRecycler.class);
-        i.putExtra("uniqueIdMaps", childNode);
-        startActivity(i);
-        finish();
+    /**
+     * Method to initialise Google API Client to facilitate all google api usage.
+     * Detailed in Google API documentation: https://developers.google.com/android/guides/api-client
+     * Once OnConnected callback
+     */
+    private void initializeGoogleApiClient() {
+        if (googleApiClient == null) {
+            googleApiClient = new GoogleApiClient.Builder(this)
+                    .addApi(LocationServices.API)
+                    .addConnectionCallbacks(this)
+                    .addOnConnectionFailedListener(this)
+                    .build();
+        }
     }
 
-
-    // Method that creates a map and places a pin over london.
-    // Calls the request location method.
+    /**
+     * Method callback for when the map is ready.
+     * Calls permission check methodd, checks for permission, If permission previously given
+     * Then if GPS enabled, location of device is monitored.
+     */
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         permissionCheck();
     }
 
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        if (mGoogleApiClient != null) {
-            mGoogleApiClient.connect();
+    /**
+     * Method that checks if the user has given application permission to use location services
+     * If permission has been granted, then location trackings is enabled if gps is on
+     */
+    public void permissionCheck() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    REQUEST_LOCATION);
+        } else {
+            mMap.setMyLocationEnabled(true);
         }
     }
 
+    /**
+     * Connects to Google Api
+     */
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if (googleApiClient != null) {
+            googleApiClient.connect();
+        }
+    }
+
+    /**
+     * Stops location updates
+     * Deletes devices location data from database
+     * Disconnects from Google API
+     */
     @Override
     protected void onStop() {
-        LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
-
-
+        LocationServices.FusedLocationApi.removeLocationUpdates(googleApiClient, this);
         mLocNodeRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot SnapShot : dataSnapshot.getChildren()) {
-
                     UserLocation uLoc = SnapShot.getValue(UserLocation.class);
                     if (dataSnapshot.hasChild(uLoc.getName())) {
                         mLocNodeRef.child(uLoc.getName()).removeValue();
@@ -179,42 +168,70 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback,
             }
             @Override
             public void onCancelled(DatabaseError databaseError) {
-
+                    // Un-required method
             }
         });
-        mGoogleApiClient.disconnect();
+        googleApiClient.disconnect();
         super.onStop();
-
-
     }
 
 
-
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-    }
-
-
+    /**
+     * Callback method called when Google API has connected
+     * Once API connected requests location updates from fused location provider
+     * checksuserlocation and then
+     * updates user locations on the map
+     */
     @Override
     public void onConnected(Bundle bundle) {
-
         createLocationRequest();
+        checkUserLocationSettings();
+        updateUserLocations();
 
-        // Google API DOCMENTS https://developers.google.com/android/reference/com/google/android/gms/location/SettingsApi
-        // Creates pop up requesting user turn on GPS, if their GPS is off.
+    }
+
+
+    /**
+     * Reconnects to Google Api if connection is suspended
+     * @param cause: integer representing the cause of suspension
+     */
+    @Override
+    public void onConnectionSuspended(int cause) {
+        googleApiClient.connect();
+    }
+
+    /**
+     * Callback method.
+     * If application fails to connect to Google Maps API, application presents toast.
+     */
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult result) {
+        Toast toast = Toast.makeText(this, "Connection to google maps location services failed at this time", Toast.LENGTH_LONG);
+        toast.show();
+    }
+
+    /**
+     * Creates location settings builder
+     * API boiler plate found at: https://developers.google.com/android/reference/com/google/android/gms/location/SettingsApi
+     * If location services off, creates popup requesting to turn services on or cancel
+     * Send result to On ActivityResponse method
+     */
+    public void checkUserLocationSettings(){
         LocationSettingsRequest.Builder lBuilder = new LocationSettingsRequest.Builder()
                 .addLocationRequest(mLocationRequest);
+        lBuilder.setAlwaysShow(true);
+
         PendingResult<LocationSettingsResult> result =
-                LocationServices.SettingsApi.checkLocationSettings(mGoogleApiClient, lBuilder.build());
+                LocationServices.SettingsApi.checkLocationSettings(googleApiClient, lBuilder.build());
         result.setResultCallback(new ResultCallback<LocationSettingsResult>() {
             @Override
             public void onResult(LocationSettingsResult result) {
                 final Status status = result.getStatus();
                 final LocationSettingsStates state = result.getLocationSettingsStates();
+
                 switch (status.getStatusCode()) {
                     case LocationSettingsStatusCodes.SUCCESS:
+                        locationUpdatesRequest();
                         break;
                     case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
                         try {
@@ -225,15 +242,45 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback,
                         }
                         break;
                     case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
-
                         break;
                 }
             }
         });
 
-        locationUpdates();
+    }
 
-        // mLoNodeRef is the UserLocation Node.
+    /**
+     * Callback method in response to LocaionSettings builder.
+     * If user clicks cancel they are taken to replyrecycler
+     * If user clicks ok, their location services are turned on and location requests begin     *
+     * @param requestCode: Code for REQUEST_LOCATION constant variable.
+     * @param resultCode: Code generated in response to location settings (RESULT_OK, RESULT_CANCELLED)
+     * @param data: Intent that carries result data, from locationsettings
+     */
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
+            case REQUEST_LOCATION:
+                switch (resultCode) {
+                    case Activity.RESULT_OK:
+                        locationUpdatesRequest();
+                        break;
+                    case Activity.RESULT_CANCELED:
+                        Intent i = new Intent(Maps.this, ReplyRecycler.class);
+                        i.putExtra("uniqueIdMaps", childNode);
+                        startActivity(i);
+                        finish();
+                }
+        }
+
+    }
+
+    /**
+     * mLoNodeRef is the UserLocation Node in teh database
+     * Takes snapshot of database and instantiates UserLocation object with latitude/longitude
+     * Adds marker to map for each user currently sharing location in that conversation thread
+     */
+    public void updateUserLocations(){
         mLocNodeRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -254,92 +301,44 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback,
 
     }
 
-    // Callback method in response to LocaionSettings builder.
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
 
-        switch (requestCode) {
-            case REQUEST_LOCATION:
-                switch (resultCode) {
-                    case Activity.RESULT_OK:
-                        locationUpdates();
-                        break;
-                    case Activity.RESULT_CANCELED:
-                        Intent i = new Intent(Maps.this, ReplyRecycler.class);
-                        i.putExtra("uniqueIdMaps", childNode);
-                        startActivity(i);
-                        finish();
-                }
-        }
-
-    }
-
-
-
-    @Override
-    public void onConnectionSuspended(int cause) {
-        mGoogleApiClient.connect();
-    }
-
-    // Callback method.
-    // If application fails to connect to Google Maps API, application presents toast.
-    @Override
-    public void onConnectionFailed(@NonNull ConnectionResult result) {
-        Toast toast = Toast.makeText(this, "Connection to google maps location services failed at this time", Toast.LENGTH_LONG);
-        toast.show();
-    }
-
-    // Method to initialise Google API Client.
-    // Detailed in Google Maps API documentation.
-    private void initializeGoogleApiClient() {
-
-        if (mGoogleApiClient == null) {
-            mGoogleApiClient = new GoogleApiClient.Builder(this)
-                    .addApi(LocationServices.API)
-                    .addConnectionCallbacks(this)
-                    .addOnConnectionFailedListener(this)
-                    .addApi(LocationServices.API)
-                    .build();
-
-        }
-    }
-
-    // High priority appropriate for apps that display in real time.
-    // Details the interval in which updates to location should be made.
+    /**
+     * Starts location requests, using LocationRequest object
+     * Sets the interval speed and priority of the location updates
+     */
     protected void createLocationRequest() {
-
-        mLocationRequest.setInterval(50000);
+        mLocationRequest.setInterval(5000);
         mLocationRequest.setFastestInterval(1000);
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
     }
 
 
-    // Method too request location updates.
-    // Uses Fused Location provider.
-    // Detailed in Google Maps API documentation for FusedLocationProvider Class.
-    public void locationUpdates() {
+    /**
+     * Method to request location updates using FusedLocationProviderAPI
+     * If permission has been given by the user, the requests begin
+     */
+    public void locationUpdatesRequest() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {
-            LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
+            LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, mLocationRequest,this);
         }
     }
 
 
-    // Callback method called when the device location changes.
-    // When the device location changes, the information is stored in a UserLocation object.
-    // This object is then sent to Firebase where it is parsed to JSON.
+    /**
+     * Callback method responding to locationUpdatesRequest method
+     * It deals with the device location
+     * Location object is instantiated when the device location changes
+     * UserLocation object is instantiated and sent to the database
+     */
     public void onLocationChanged(Location location) {
         dLocation = location;
         if (dLocation != null) {
             double latitude = dLocation.getLatitude();
             double longitude = dLocation.getLongitude();
-
-
             uLocation.setName(mUser.getDisplayName());
             uLocation.setLatitude(latitude);
             uLocation.setLongitude(longitude);
-
-            // This was mLocationDataRef!!!
             mLocNodeRef.child(uLocation.getName()).setValue(uLocation);
 
         }
@@ -348,16 +347,17 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback,
 
 
 
-    // Method that checks the user has given the application permission to use location services.
-    // If permission has already been requested, then location services is enabled.
-    public void permissionCheck() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                    REQUEST_LOCATION);
-        } else {
-            mMap.setMyLocationEnabled(true);
-        }
+    /**
+     * When back button pressed, returns to recycler view activity.
+     * provides required putExtra() variable of the child node for reply recycler.
+     */
+
+    @Override
+    public void onBackPressed(){
+        Intent i = new Intent(Maps.this, ReplyRecycler.class);
+        i.putExtra("uniqueIdMaps", childNode);
+        startActivity(i);
+        finish();
     }
 
 

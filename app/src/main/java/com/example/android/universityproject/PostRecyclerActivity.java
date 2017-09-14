@@ -33,6 +33,7 @@ public class PostRecyclerActivity extends AppCompatActivity {
     private RecyclerView.Adapter mAdapter;
     private LinearLayoutManager mLayoutManager;
     private DatabaseReference dataRef;
+    private FloatingActionButton addPost;
 
 
     @Override
@@ -58,29 +59,30 @@ public class PostRecyclerActivity extends AppCompatActivity {
         mRecyclerView.setLayoutManager(mLayoutManager);
 
         // Creation of FAB onClick Listener
-        final FloatingActionButton addPost = (FloatingActionButton) findViewById(R.id.add_Post);
+        addPost = (FloatingActionButton) findViewById(R.id.add_Post);
         addPost.setOnClickListener(startNewPost);
 
-        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener(){
-            @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy){
-                if (dy > 0){
-                    addPost.hide();}
-                else if (dy < 0){
-                    addPost.show();}
-            }
-        });
+        hideRevealFAB();
 
 
-
-
-
+        /**
+         * Instantiates the Firebase Recycler Adapter
+         * Takes the POJO class, layout file, viewholder class and the datbase refernce
+         * as arguments
+         */
         mAdapter = new FirebaseRecyclerAdapter<ListItem, ItemViewHolder>(
                 ListItem.class,
                 R.layout.post_recycler_item,
                 ItemViewHolder.class,
                 dataRef.child("chat")) {
-
+            /**
+             * Calls bind method from ReplyViewHolder class
+             * Binds the data from the database to the reply_recyler_item layout file
+             * If first oringal post, turn blue to differentiate from replies
+             * @param viewHolder: Holder for the Layout file
+             * @param post: ListItem class object storing information from database
+             * @param position: The position the ViewHolder has in the recyclerView
+             */
             @Override
             protected void populateViewHolder(ItemViewHolder viewHolder, ListItem post, int position) {
                 viewHolder.bind(post);
@@ -91,7 +93,32 @@ public class PostRecyclerActivity extends AppCompatActivity {
     }
 
 
+    /**
+     * Hides floating action button when scrolling down
+     * Reveals floating action burron when scrolling up
+     */
+    private void hideRevealFAB(){
+        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener(){
+            /**
+             * @param recyclerView: The recyclerView
+             * @param dx: Horizontal scrolling variable
+             * @param dy: Vertical scrolling variable
+             */
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy){
+                if (dy > 0){
+                    addPost.hide();}
+                else if (dy < 0){
+                    addPost.show();}
+            }
+        });
+    }
 
+
+    /**
+     * Starts newPost activity
+     * Ends this activity
+     */
     private View.OnClickListener startNewPost = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -102,12 +129,23 @@ public class PostRecyclerActivity extends AppCompatActivity {
         }
     };
 
+    /**
+     * Creates the toolbar and options menu
+     * @param menu: The menu bar
+     * @return: Returns the Action tool bar
+     */
     @Override
     public boolean onCreateOptionsMenu (Menu menu){
         getMenuInflater().inflate(R.menu.menu_items, menu);
         return super.onCreateOptionsMenu(menu);
     }
 
+    /**
+     * Provides functionality to thee overflow.
+     * Signout overflow option signs user out and takes them to main activity page
+     * @param item: The item within the overflow menu
+     * @return: Creates tool bar with overflow menu sign out option
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -132,6 +170,11 @@ public class PostRecyclerActivity extends AppCompatActivity {
         }
     }
 
+
+    /**
+     * Starts the Main activity
+     * Ends this activity
+     */
     @Override
     public void onBackPressed(){
         super.onBackPressed();

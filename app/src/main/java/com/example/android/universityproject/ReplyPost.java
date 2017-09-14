@@ -17,7 +17,13 @@ public class ReplyPost extends BasePostActivity{
     private TextView mTitleField;
 
 
-
+    /**
+     * Override parent class onCreate
+     * Dynamically removes the title field as it is not required for message responses
+     * Ensures connection to the correct database node
+     * takes the database node in string from replyRecycler activity using getExtra()
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setContentView(R.layout.activity_base_post);
@@ -31,6 +37,11 @@ public class ReplyPost extends BasePostActivity{
 
     }
 
+    /**
+     * Method to connect to correct database nodes
+     * Sends post contents to Convo's nodes in database
+     * Overrides parent class abstract method
+     */
     @Override
     public void DatabaseConnect(){
         mFirebaseDatabaseReference = FirebaseDatabase.getInstance().getReference();
@@ -40,7 +51,13 @@ public class ReplyPost extends BasePostActivity{
 
 
 
-
+    /**
+     * Gets unique PushID from firebase push method
+     * and sends post to the specified nodes
+     * Starts the PostRescylcler activity once complete
+     *
+     * If no message body is provided, then shows toast requesting title be added.
+     */
     @Override
     public void sendPost() {
         if (newPost.getBody().toString().replaceAll("\\s", "").length() > 0) {
@@ -59,8 +76,11 @@ public class ReplyPost extends BasePostActivity{
     }
 
 
-
-
+    /**
+     * When back pressed starts reply recycler
+     * includes the getExtra for the relevant child node to avoid null pointer exception in
+     * Reply recycler
+     */
     @Override
     public void onBackPressed(){
         Intent i = new Intent(ReplyPost.this, ReplyRecycler.class);

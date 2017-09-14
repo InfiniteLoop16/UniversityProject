@@ -34,12 +34,19 @@ public class MainActivity extends AppCompatActivity {
 
     private static final int RC_SIGN_IN = 1;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        requestLogIn();
+    }
 
-
+    /**
+     * Boiler plate code provided by Firebase UI Auth library - https://github.com/firebase/FirebaseUI-Android/blob/master/auth/README.md
+     * Starts login flow.
+     */
+    public void requestLogIn(){
         startActivityForResult(
                 AuthUI.getInstance()
                         .createSignInIntentBuilder()
@@ -49,14 +56,17 @@ public class MainActivity extends AppCompatActivity {
                                         new AuthUI.IdpConfig.Builder(AuthUI.FACEBOOK_PROVIDER).build()))
                         .build(),
                 RC_SIGN_IN);
-
-
     }
 
 
-    // Verifies request code value, sent from Google API, to RC_SIGN_IN constant.
-    // If values match then Users federated account (Google, Gmail, Hotmail) is verified
-    // User is signed in, and allowed to use the application.
+    /**
+     * Verifies user has logged in.
+     * Shows toast if response null, user pressing back
+     * Boilder plat code provided by Firebase UI Auth library - https://github.com/firebase/FirebaseUI-Android/blob/master/auth/README.md
+     * @param requestCode: RC_SIGN_IN constant variable value
+     * @param resultCode: Response from user (RESULT_OK,NO_NETWORK, UNKNOWN_ERROR)
+     * @param data: The intent awaiting result
+     */
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
