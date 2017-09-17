@@ -18,6 +18,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
@@ -25,12 +26,14 @@ import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResult;
 import com.google.android.gms.location.LocationSettingsStates;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -66,6 +69,11 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback,
 
 
 
+
+
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -93,9 +101,17 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback,
         mLocationRequest = new LocationRequest();
 
 
+
+
+
+
+
         initializeGoogleApiClient();
 
+
     }
+
+
 
     /**
      * Method to initialise Google API Client to facilitate all google api usage.
@@ -121,6 +137,7 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback,
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         permissionCheck();
+
     }
 
     /**
@@ -209,6 +226,7 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback,
         Toast toast = Toast.makeText(this, "Connection to google maps location services failed at this time", Toast.LENGTH_LONG);
         toast.show();
     }
+
 
     /**
      * Creates location settings builder
@@ -307,7 +325,7 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback,
      * Sets the interval speed and priority of the location updates
      */
     protected void createLocationRequest() {
-        mLocationRequest.setInterval(5000);
+        mLocationRequest.setInterval(2000);
         mLocationRequest.setFastestInterval(1000);
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
     }

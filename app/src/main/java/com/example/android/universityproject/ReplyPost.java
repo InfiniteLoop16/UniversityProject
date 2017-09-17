@@ -68,6 +68,7 @@ public class ReplyPost extends BasePostActivity{
             Intent i = new Intent(ReplyPost.this, ReplyRecycler.class);
             i.putExtra("uniqueIdReplyPost", childNode);
             startActivity(i);
+            finish();
         } else {
             Toast toast = Toast.makeText(ReplyPost.this, R.string.reply_post_warning, Toast.LENGTH_SHORT);
             toast.show();
